@@ -1,35 +1,113 @@
+import { useForm, SubmitHandler } from 'react-hook-form'
+import axios from 'axios'
+
+type Inputs = {
+  name: string
+  middleName: string
+  lastName: string
+  login: string
+  password: string
+}
+
 const SignUpPage = () => {
-    return (
-        <article className="container">
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>()
 
-            <section className="block__item block-item">
-                <h2 className="block-item__title">У вас уже есть аккаунт?</h2>
-                <a href="signInform.html" className="block-item__btn signin-btn">Войти</a>
-            </section>
+  const onSubmit: SubmitHandler<Inputs> = async ({
+    name,
+    middleName,
+    lastName,
+    login,
+    password,
+  }) => {
 
-            <form action="#" className="form form_signup" id="registration-form">
-                <h3 className="form__title">Регистрация</h3>
-                <label>
-                    <input name="name" className="form__input" id="name" placeholder="Имя" />
-                </label>
-                <label>
-                    <input name="middlename" className="form__input" id="middlename" placeholder="Отчество" />
-                </label>
-                <label>
-                    <input name="lastname" className="form__input" id="lastname" placeholder="Фамилия" />
-                </label>
-                <label>
-                    <input name="login" className="form__input" id="login" placeholder="Логин" />
-                </label>
-                <label>
-                    <input type="password" name="password" className="form__input" id="password" placeholder="Пароль" />
-                </label>
-                <button type="submit" className="form__btn_signup">Зарегистрироваться</button>
-            </form>
-        </article>
-    )
+    const requestBody = {
+      username: login,
+      second_name: middleName,
+      password: password,
+      name: name,
+      last_name: lastName,
+    }
+
+    try {
+      // поменять УРЛ на урл локально развернутого бэка
+      const response = await axios.post('URL FOR BACKEND WILL BE HERE', requestBody)
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
+
+    console.log(requestBody)
+  }
+
+  return (
+    <article className='container'>
+      <section className='block__item block-item'>
+        <h2 className='block-item__title'>У вас уже есть аккаунт?</h2>
+        <a href='signInform.html' className='block-item__btn signin-btn'>
+          Войти
+        </a>
+      </section>
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='form form_signup'
+        id='registration-form'
+      >
+        <h3 className='form__title'>Регистрация</h3>
+        <label>
+          <input
+            {...register('name')}
+            className='form__input'
+            id='name'
+            placeholder='Имя'
+          />
+        </label>
+        <label>
+          <input
+            {...register('middleName')}
+            className='form__input'
+            id='middlename'
+            placeholder='Отчество'
+          />
+        </label>
+        <label>
+          <input
+            {...register('lastName')}
+            className='form__input'
+            id='lastname'
+            placeholder='Фамилия'
+          />
+        </label>
+        <label>
+          <input
+            {...register('login')}
+            className='form__input'
+            id='login'
+            placeholder='Логин'
+          />
+        </label>
+        <label>
+          <input
+            {...register('password')}
+            name='password'
+            className='form__input'
+            id='password'
+            placeholder='Пароль'
+          />
+        </label>
+
+        <button type='submit' className='form__btn_signup'>
+          Зарегистрироваться
+        </button>
+      </form>
+    </article>
+  )
 }
 
 export {
-    SignUpPage
+  SignUpPage,
 }
