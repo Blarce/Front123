@@ -4,6 +4,15 @@ import { Link } from 'react-router-dom'
 
 import styles from './SignUpPage.module.css'
 
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:8080',
+  timeout: 1000,
+  headers:{
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+  }
+});
+
 type Inputs = {
   name: string
   middleName: string
@@ -37,12 +46,7 @@ const SignUpPage = () => {
 
     try {
       // поменять УРЛ на урл локально развернутого бэка
-      const response = await axios.post('http://localhost:8080/registration', requestBody, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
-        },
-      })
+      const response = await axiosInstance.post('/registration', requestBody)
       console.log(response)
     } catch (error) {
       console.error(error)
