@@ -35,7 +35,12 @@ const SignInPage = () => {
 
     try {
       // поменять УРЛ на урл локально развернутого бэка
-      const response = await axios.post('URL FOR BACKEND WILL BE HERE', requestBody)
+      const response = await axios.post('http://localhost:8080/', requestBody, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
       console.log(response)
     } catch (error) {
       console.error(error)
