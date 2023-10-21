@@ -44,3 +44,10 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+PS
+
+Для запуска проекта (локально) 
+1) Установить NodeJS (https://nodejs.org/en/download/current)
+2) В корне проекта выполнить команду `npm install`
+3) запустить проект (``npm start``)
