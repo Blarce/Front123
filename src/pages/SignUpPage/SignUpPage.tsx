@@ -1,5 +1,8 @@
 import { useForm, SubmitHandler } from 'react-hook-form'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
+
+import styles from './SignUpPage.module.css'
 
 type Inputs = {
   name: string
@@ -47,14 +50,12 @@ const SignUpPage = () => {
     <article className='container'>
       <section className='block__item block-item'>
         <h2 className='block-item__title'>У вас уже есть аккаунт?</h2>
-        <a href='signInform.html' className='block-item__btn signin-btn'>
-          Войти
-        </a>
+        <Link to='/sign-in' className='block-item__btn signin-btn'>Войти</Link>
       </section>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className='form form_signup'
+        className={styles.SignUpPage}
         id='registration-form'
       >
         <h3 className='form__title'>Регистрация</h3>
