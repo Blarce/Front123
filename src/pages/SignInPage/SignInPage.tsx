@@ -47,6 +47,11 @@ const SignInPage = () => {
   return (
     <body>
       <article className='container'>
+        <form
+            onSubmit={handleSubmit(onSubmit)}
+            className='form__btn_signin'
+            id='signIn-form'
+        >
         <section className='block__item block-item'>
           <h2 className='block-item__title'>Вход</h2>
           {/*<Link to='/sign-in' className='block-item__btn signin-btn'>*/}
@@ -73,12 +78,6 @@ const SignInPage = () => {
         <button type='submit' className='form__btn_signin'>
           Вход
         </button>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className='form form_signup'
-          id='registration-form'
-        >
-          <h3 className='form__title'>Войти</h3>
         </form>
       </article>
     </body>
