@@ -56,12 +56,8 @@ const SignUpPage = () => {
   }
 
   return (
+  <body>
     <article className='container'>
-      <section className='block__item block-item'>
-        <h2 className='block-item__title'>У вас уже есть аккаунт?</h2>
-        <Link to='/sign-in' className='block-item__btn signin-btn'>Войти</Link>
-      </section>
-
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles.SignUpPage}
@@ -79,7 +75,7 @@ const SignUpPage = () => {
         <label>
           <input
             {...register('middleName')}
-            className='form__input'
+            className={styles.form__input}
             id='middlename'
             placeholder='Отчество'
           />
@@ -114,7 +110,12 @@ const SignUpPage = () => {
           Зарегистрироваться
         </button>
       </form>
+      <section className='block__item block-item'>
+        <h2 className='block-item__title'>У вас уже есть аккаунт?</h2>
+        <Link to='/sign-in' className='block-item__btn signin-btn'>Войти</Link>
+      </section>
     </article>
+  </body>
   )
 }
 

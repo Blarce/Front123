@@ -1,3 +1,12 @@
-.SignUpPage {
-    background-color: olivedrab;
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+.body {
+    align-items: center;
+    background: #D8AA96;
+    color: #61dafb;
+    display: grid;
+    font-size: 14px;
+    font-weight: 400;
+    height: 100vh;
+    justify-items: center;
+    weight: 100vw;
 }
