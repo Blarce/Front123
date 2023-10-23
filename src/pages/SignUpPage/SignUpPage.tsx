@@ -3,7 +3,6 @@ import axios from 'axios'
 import { Link } from 'react-router-dom'
 
 import styles from './SignUpPage.module.css'
-
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080',
   timeout: 1000,
@@ -63,6 +62,7 @@ const SignUpPage = () => {
       </section>
 
       <form
+          action={"http://localhost:8080/registration"}
         onSubmit={handleSubmit(onSubmit)}
         className={styles.SignUpPage}
         id='registration-form'
