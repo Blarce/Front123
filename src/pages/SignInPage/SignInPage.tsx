@@ -80,8 +80,9 @@ const SignInPage = () => {
             />
             <label>Пароль</label>
           </div>
-          <button type='submit' className={styles.signInButton}>
-            <Link to='/main'>
+          <button className={styles.signInButton}>
+            <Link to='/main'
+                  type='submit'>
               Вход
             </Link>
           </button>
