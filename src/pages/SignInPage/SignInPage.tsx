@@ -81,7 +81,9 @@ const SignInPage = () => {
             <label>Пароль</label>
           </div>
           <button type='submit' className={styles.signInButton}>
-            Вход
+            <Link to='/main'>
+              Вход
+            </Link>
           </button>
           <div className={styles.createAccount}>
             <p>
