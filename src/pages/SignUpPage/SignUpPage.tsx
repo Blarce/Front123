@@ -56,7 +56,7 @@ const SignUpPage = () => {
   }
 
   return (
-  <body>
+  <body className = {styles.body}>
     <article className='container'>
       <form
         onSubmit={handleSubmit(onSubmit)}

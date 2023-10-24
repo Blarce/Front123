@@ -1,7 +1,13 @@
 import { useForm, SubmitHandler } from 'react-hook-form'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
-
+import styles from './SignInPage.module.css'
+import {SiSurveymonkey} from 'react-icons/si'
+import {BiSolidLockAlt} from 'react-icons/bi'
+import {useState} from "react";
+import {link} from "fs/promises";
+//const [login, setLogin] = useState('')
+//const [password, setPassword] = useState('')
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080',
   timeout: 1000,
@@ -24,10 +30,7 @@ const SignInPage = () => {
     formState: { errors },
   } = useForm<Inputs>()
 
-  const onSubmit: SubmitHandler<Inputs> = async ({
-    login,
-    password,
-  }) => {
+  const onSubmit: SubmitHandler<Inputs> = async ({ login, password }) => {
     const requestBody = {
       username: login,
       password: password,
@@ -43,47 +46,59 @@ const SignInPage = () => {
 
     console.log(requestBody)
   }
-
   return (
-    <body>
-      <article className='container'>
+    <div className={styles.signIn_section}>
+      <div className={styles.formBox}>
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className='form__btn_signin'
             id='signIn-form'
+            action=''
         >
-        <section className='block__item block-item'>
-          <h2 className='block-item__title'>Вход</h2>
-          {/*<Link to='/sign-in' className='block-item__btn signin-btn'>*/}
-          {/*  Войти*/}
-          {/*</Link>*/}
-        </section>
-        <label>
-          <input
-              {...register('login')}
-              className='form__input'
-              id='login'
-              placeholder='Логин'
-          />
-        </label>
-        <label>
-          <input
+          <h2>Вход</h2>
+          <div className={styles.inputBox}>
+            <span className={styles.icon}>
+              <SiSurveymonkey />
+            </span>
+            <input
+                {...register('login')}
+                type='text' required
+                id='login'
+                pattern='^[a-zA-Z0-9_.-]*$'
+            />
+            <label>Логин</label>
+          </div>
+          <div className={styles.inputBox}>
+            <span className={styles.icon}>
+              <BiSolidLockAlt />
+            </span>
+            <input
               {...register('password')}
-              name='password'
-              className='form__input'
+              type='password'
+              required
               id='password'
-              placeholder='Пароль'
-          />
-        </label>
-        <button type='submit' className='form__btn_signin'>
-          Вход
-        </button>
+              pattern='^[a-zA-Z0-9_.-]*$'
+            />
+            <label>Пароль</label>
+          </div>
+          <button type='submit' className={styles.signInButton}>
+            Вход
+          </button>
+          <div className={styles.createAccount}>
+            <p>
+              Нет аккаунта?
+              <a> </a>
+              <a>
+                <Link to='/sign-up'>
+                   Зарегестрироваться
+                </Link>
+              </a>
+            </p>
+          </div>
         </form>
-      </article>
-    </body>
+      </div>
+    </div>
   )
 }
-
 export {
   SignInPage,
 }

@@ -10,7 +10,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { SignInPage } from './pages/SignInPage/SignInPage'
-
+import {SignUpPage} from './pages/SignUpPage/SignUpPage'
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,6 +20,10 @@ const router = createBrowserRouter([
     path: "/sign-in",
     element: <SignInPage />
   },
+  {
+    path:"/sign-up",
+    element: <SignUpPage />
+  }
 ]);
 
 // @ts-ignore
