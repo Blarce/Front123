@@ -1,6 +1,6 @@
 import { useForm, SubmitHandler } from 'react-hook-form'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styles from './SignInPage.module.css'
 import {SiSurveymonkey} from 'react-icons/si'
 import {BiSolidLockAlt} from 'react-icons/bi'
@@ -29,7 +29,7 @@ const SignInPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>()
-
+  const navigate = useNavigate()
   const onSubmit: SubmitHandler<Inputs> = async ({ login, password }) => {
     const requestBody = {
       username: login,
@@ -43,8 +43,11 @@ const SignInPage = () => {
     } catch (error) {
       console.error(error)
     }
-
+    finally {
+      localStorage.setItem('token','token will be here');
+    }
     console.log(requestBody)
+    navigate('/main');
   }
   return (
     <div className={styles.signIn_section}>
@@ -80,11 +83,8 @@ const SignInPage = () => {
             />
             <label>Пароль</label>
           </div>
-          <button className={styles.signInButton}>
-            <Link to='/main'
-                  type='submit'>
+          <button type='submit' className={styles.signInButton}>
               Вход
-            </Link>
           </button>
           <div className={styles.createAccount}>
             <p>

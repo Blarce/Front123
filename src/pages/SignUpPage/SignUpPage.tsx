@@ -1,7 +1,6 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './SignUpPage.module.css';
 import {SiSurveymonkey} from "react-icons/si";
 import {BiSolidLockAlt} from "react-icons/bi";
@@ -30,7 +29,7 @@ const SignUpPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>()
-
+const navigate = useNavigate()
   const onSubmit: SubmitHandler<Inputs> = async ({
     name,
     middleName,
@@ -45,7 +44,6 @@ const SignUpPage = () => {
       name: name,
       last_name: lastName,
     }
-
     try {
       // поменять УРЛ на урл локально развернутого бэка
       const response = await axiosInstance.post('/registration', requestBody)
@@ -53,7 +51,11 @@ const SignUpPage = () => {
     } catch (error) {
       console.error(error)
     }
+    finally {
+      localStorage.setItem('token','token will be here');
+    }
     console.log(requestBody)
+    navigate('/main');
   }
 
   return (
@@ -62,7 +64,6 @@ const SignUpPage = () => {
         <form
           onSubmit={handleSubmit(onSubmit)}
           id='registration-form'
-          action=''
         >
           <h2>Регистрация</h2>
           <div className={styles.inputBox}>
@@ -73,7 +74,6 @@ const SignUpPage = () => {
                 {...register('name')}
                 type='text' required
                 id='name'
-                pattern='^[a-zA-Z0-9_.-]*$'
             />
             <label>Имя</label>
           </div>
@@ -85,7 +85,6 @@ const SignUpPage = () => {
                 {...register('middleName')}
                 type='text' required
                 id='middleName'
-                pattern='^[a-zA-Z0-9_.-]*$'
             />
             <label>Отчество</label>
           </div>
@@ -97,7 +96,6 @@ const SignUpPage = () => {
                 {...register('lastName')}
                 type='text' required
                 id='lastName'
-                pattern='^[a-zA-Z0-9_.-]*$'
             />
             <label>Фамилия</label>
           </div>
@@ -109,7 +107,6 @@ const SignUpPage = () => {
                 {...register('login')}
                 type='text' required
                 id='login'
-                pattern='^[a-zA-Z0-9_.-]*$'
             />
             <label>Логин</label>
           </div>
@@ -121,7 +118,6 @@ const SignUpPage = () => {
                 {...register('password')}
                 type='password' required
                 id='password'
-                pattern='^[a-zA-Z0-9_.-]*$'
             />
             <label>Пароль</label>
           </div>
@@ -132,7 +128,6 @@ const SignUpPage = () => {
             <input
                 type='password' required
                 id='passwordSumbit'
-                pattern='^[a-zA-Z0-9_.-]*$'
             />
             <label>Подтвердите пароль</label>
           </div>
@@ -143,14 +138,12 @@ const SignUpPage = () => {
             <input
                 type='text' required
                 id='telegrammId'
-                pattern='^[a-zA-Z0-9_.-]*$'
             />
             <label>Telegram id</label>
           </div>
-          <button type='submit' className={styles.signUpButton}>
-            <Link to='/main'>
-              Вход
-            </Link>
+          <button  type='submit' className={styles.signUpButton}
+          >
+            Вход
           </button>
           <div className={styles.alreadyHave}>
             <p>

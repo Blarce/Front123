@@ -6,11 +6,13 @@ import {BiSolidLockAlt} from "react-icons/bi";
 import {LiaTelegramPlane} from "react-icons/lia";
 import {Link} from "react-router-dom";
 const MainPage= () => {
-
+console.log(localStorage.getItem('token'));
     return (
+        <section className={styles.body}>
         <div className={styles.signUp_section}>
             <h2>token</h2>
         </div>
+        </section>
     )
 }
 
