@@ -10,7 +10,7 @@ console.log(localStorage.getItem('token'));
     return (
         <section className={styles.body}>
         <div className={styles.signUp_section}>
-            <h2>token</h2>
+            <h2>{localStorage.getItem('token')}</h2>
         </div>
         </section>
     )

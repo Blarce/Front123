@@ -39,12 +39,10 @@ const SignInPage = () => {
     try {
       // поменять УРЛ на урл локально развернутого бэка
       const response = await axiosInstance.post('/login', requestBody)
+      localStorage.setItem('token',response.data.token);
       console.log(response)
     } catch (error) {
       console.error(error)
-    }
-    finally {
-      localStorage.setItem('token','token will be here');
     }
     console.log(requestBody)
     navigate('/main');
