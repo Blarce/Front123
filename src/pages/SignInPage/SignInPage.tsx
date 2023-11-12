@@ -1,10 +1,10 @@
 import {SubmitHandler, useForm} from 'react-hook-form'
-import {Link, useNavigate} from 'react-router-dom'
+import {Link, Navigate, useNavigate} from 'react-router-dom'
 import styles from './SignInPage.module.css'
 import {SiSurveymonkey} from 'react-icons/si'
 import {BiSolidLockAlt} from 'react-icons/bi'
 import Modal from 'react-modal';
-import {useState} from "react";
+import React, {useState} from "react";
 import {axiosInstance} from "../api";
 const customStyles = {
   content: {
@@ -30,6 +30,13 @@ const SignInPage = () => {
   } = useForm<Inputs>()
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false);
+
+  const userToken = localStorage.getItem('token')
+
+  if(userToken) {
+    return <Navigate to='/main' />
+  }
+
   function openModal() {
     setIsOpen(true);
   }
