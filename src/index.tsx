@@ -10,7 +10,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { SignInPage } from './pages/SignInPage/SignInPage'
-
 const router = createBrowserRouter([
   {
     path: "/",
