@@ -1,148 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin : 0;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background-color: rgba(46, 69, 183, 1);
-  transition: 0.5s;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+*{
   font-family: 'Roboto', sans-serif;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-.container {
-  width: 900px;
-  height: 600px;
-  padding: 40px 0;
-  position: relative;
-}
-
-.block {
-  height: 100%;
-  background-color: azure;
-  background-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 5px 45px rgba(0, 0, 0, 0.2);
-
-  display: flex;
-  align-items: center;
-}
-
-.block__item {
-  width: 50%;
-}
-
-.block-item {
-  text-align: center;
-}
-
-.block-item__title {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color:aliceblue;
-  margin-bottom: 10px;
-}
-
-.block-item__btn {
-  border: none;
-  cursor: pointer;
-  padding: 10px 20px;
-  background-color: #fff;
-  color: #333;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.form-box {
-  background-color: #fff;
-  height: 100%;
-  width: 50%;
-  box-shadow: 0 5px 45px rgba(0, 0, 0, 0.25);
-
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  transition: 0.5s ease-in-out;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-}
-
-.form-box.active {
-  left: 50%;
-}
-
-.form {
-  width: 100%;
-  padding: 50px;
-  font-size: 16px;
-
-  position: absolute;
-  transition: 0.5s;
-}
-
-.form_signin {
-  left: 0;
-  transition-delay: 0.25s;
-}
-
-.form_signup {
-  left: 100%;
-}
-
-.form__title {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #333;
-
-}
-
-.form-box.active .form_signin {
-  left: -100%;
-  transition-delay: 0s;
-}
-
-.form-box.active .form_signup {
-  left: 0;
-  transition-delay: 0.25s;
-}
-
-.form__input {
-  width: 100%;
-  padding: 10px;
-  border: solid 1px #333;
-  font-size: inherit;
-}
-
-.form__btn {
-  border: none;
-  cursor: pointer;
-  font-size: inherit;
-  background-color: rgba(46, 69, 183, 1);
+  margin: 0;
+  padding: 0;
   color: #fff;
-  padding: 10px 50px;
 }
 
 
-.form__btn_signup {
-  border: none;
-  cursor: pointer;
-  font-size: inherit;
-  background-color: rgba(226, 39, 39, 1);
-  color: #fff;
-  padding: 10px 50px;
+
+body, #root {
+  height: 100vh;
+  background: url("background_banana.png");
+  background-size: 1920px 1080px;
 }
 
+.ReactModal__Overlay.ReactModal__Overlay--after-open{
+  background-color: rgba(0,0,0,0.2) !important;
+  backdrop-filter: blur(1px);
+}

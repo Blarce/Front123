@@ -1,16 +1,24 @@
-import { useForm, SubmitHandler } from 'react-hook-form'
-import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import styles from './SignUpPage.module.css';
+import Modal from 'react-modal';
+import {SiSurveymonkey} from "react-icons/si";
+import {BiSolidLockAlt} from "react-icons/bi";
+import {AiOutlineUser} from "react-icons/ai";
+import {LiaTelegramPlane} from "react-icons/lia"
+import {useState} from "react";
+import {axiosInstance} from "../api";
 
-import styles from './SignUpPage.module.css'
-const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080',
-  timeout: 1000,
-  headers:{
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-  }
-});
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
 
 type Inputs = {
   name: string
@@ -26,7 +34,14 @@ const SignUpPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>()
-
+const navigate = useNavigate()
+  const [modalIsOpen, setIsOpen] = useState(false);
+  function openModal() {
+    setIsOpen(true);
+  }
+  function closeModal() {
+    setIsOpen(false);
+  }
   const onSubmit: SubmitHandler<Inputs> = async ({
     name,
     middleName,
@@ -34,7 +49,6 @@ const SignUpPage = () => {
     login,
     password,
   }) => {
-
     const requestBody = {
       username: login,
       second_name: middleName,
@@ -42,79 +56,142 @@ const SignUpPage = () => {
       name: name,
       last_name: lastName,
     }
-
     try {
-      // поменять УРЛ на урл локально развернутого бэка
-      const response = await axiosInstance.post('/registration', requestBody)
+      const response = await axiosInstance.post('/sign-up', requestBody)
+      localStorage.setItem('token',response.data.token);
+      localStorage.setItem('username',response.data.username);
       console.log(response)
+      navigate('/main');
     } catch (error) {
       console.error(error)
+      //@ts-ignore
+      if (error.response.status === 400)
+      {
+        openModal()
+      }
     }
-
     console.log(requestBody)
   }
 
   return (
-    <article className='container'>
-      <section className='block__item block-item'>
-        <h2 className='block-item__title'>У вас уже есть аккаунт?</h2>
-        <Link to='/sign-in' className='block-item__btn signin-btn'>Войти</Link>
-      </section>
-
-      <form
-          action={"http://localhost:8080/registration"}
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles.SignUpPage}
-        id='registration-form'
+    <div className={styles.signUp_section}>
+      <div className={styles.boxForm}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          id='registration-form'
+        >
+          <h2>Регистрация</h2>
+          <div className={styles.inputBox}>
+            <span className={styles.icon}>
+              <AiOutlineUser />
+            </span>
+            <input
+                {...register('name')}
+                type='text' required
+                id='name'
+            />
+            <label>Имя</label>
+          </div>
+          <div className={styles.inputBox}>
+            <span className={styles.icon}>
+              <AiOutlineUser />
+            </span>
+            <input
+                {...register('middleName')}
+                type='text' required
+                id='middleName'
+            />
+            <label>Отчество</label>
+          </div>
+          <div className={styles.inputBox}>
+            <span className={styles.icon}>
+              <AiOutlineUser/>
+            </span>
+            <input
+                {...register('lastName')}
+                type='text' required
+                id='lastName'
+            />
+            <label>Фамилия</label>
+          </div>
+          <div className={styles.inputBox}>
+            <span className={styles.icon}>
+              <SiSurveymonkey />
+            </span>
+            <input
+                {...register('login')}
+                type='text' required
+                id='login'
+            />
+            <label>Логин</label>
+          </div>
+          <div className={styles.inputBox}>
+            <span className={styles.icon}>
+              <BiSolidLockAlt />
+            </span>
+            <input
+                {...register('password')}
+                type='password' required
+                id='password'
+            />
+            <label>Пароль</label>
+          </div>
+          <div className={styles.inputBox}>
+            <span className={styles.icon}>
+              <BiSolidLockAlt />
+            </span>
+            <input
+                type='password' required
+                id='passwordSumbit'
+            />
+            <label>Подтвердите пароль</label>
+          </div>
+          <div className={styles.inputBox}>
+            <span className={styles.icon}>
+              <LiaTelegramPlane />
+            </span>
+            <input
+                className={styles.telegramInput}
+                type='text'
+                id='telegrammId'
+            />
+            <label
+                className={styles.labelTelegram}
+            >Telegram id
+            </label>
+          </div>
+          <button  type='submit' className={styles.signUpButton}
+          >
+            Вход
+          </button>
+          <div className={styles.alreadyHave}>
+            <p>
+              У вас уже есть аккаунт?
+              <a> </a>
+              <a>
+                <Link to='/sign-in'>
+                  Войти
+                </Link>
+              </a>
+            </p>
+          </div>
+        </form>
+      </div>
+      <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
       >
-        <h3 className='form__title'>Регистрация</h3>
-        <label>
-          <input
-            {...register('name')}
-            className='form__input'
-            id='name'
-            placeholder='Имя'
-          />
-        </label>
-        <label>
-          <input
-            {...register('middleName')}
-            className='form__input'
-            id='middlename'
-            placeholder='Отчество'
-          />
-        </label>
-        <label>
-          <input
-            {...register('lastName')}
-            className='form__input'
-            id='lastname'
-            placeholder='Фамилия'
-          />
-        </label>
-        <label>
-          <input
-            {...register('login')}
-            className='form__input'
-            id='login'
-            placeholder='Логин'
-          />
-        </label>
-        <label>
-          <input
-            {...register('password')}
-            name='password'
-            className='form__input'
-            id='password'
-            placeholder='Пароль'
-          />
-        </label>
+        <div
+            className={styles.textModal}>
+          Пользователь с таким логином уже существует.</div>
+        <button onClick={closeModal}
+                className={styles.signUpButton}
+        >Закрыть</button>
 
-        <button type='submit' className='form__btn_signup'>
-          Зарегистрироваться
-        </button>
-      </form>
-    </article>
+      </Modal>
+    </div>
   )
 }
 
