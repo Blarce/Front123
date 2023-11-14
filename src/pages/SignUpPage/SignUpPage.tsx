@@ -9,6 +9,8 @@ import {LiaTelegramPlane} from "react-icons/lia"
 import React, {useState} from "react";
 import {axiosInstance} from "../api";
 
+Modal.setAppElement('#root');
+
 const customStyles = {
   content: {
     top: '50%',

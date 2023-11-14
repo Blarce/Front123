@@ -6,7 +6,11 @@ import {BiSolidLockAlt} from 'react-icons/bi'
 import Modal from 'react-modal';
 import React, {useState} from "react";
 import {axiosInstance} from "../api";
+
+Modal.setAppElement('#root');
+
 let text = '';
+
 const customStyles = {
   content: {
     top: '50%',
