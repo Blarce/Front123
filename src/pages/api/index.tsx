@@ -1,5 +1,5 @@
 import axios, {AxiosError} from "axios";
-// import createAuthRefreshInterceptor from 'axios-auth-refresh'
+import createAuthRefreshInterceptor from 'axios-auth-refresh'
 
 export const axiosInstance = axios.create({
     baseURL: 'http://localhost:8080',
@@ -10,30 +10,36 @@ export const axiosInstance = axios.create({
     }
 });
 
-const refreshAuthLogic = (failedRequest: AxiosError) => {
-    return axiosInstance
-        .get('PATH TO REFRESH TOKEN ENDPOINT', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
-            },
+ export const refreshAuthLogic = (failedRequest: AxiosError) => {
+     return axiosInstance
+        .post('/refresh', {
+            token: localStorage.getItem('refreshToken')
         })
-        .then(({ data: { token, refreshToken } }) => {
-            localStorage.setItem('token', token)
+        .then(({ data: { accessToken, refreshToken } }) => {
+            localStorage.setItem('token', accessToken)
             localStorage.setItem('refreshToken', refreshToken)
             if (failedRequest && failedRequest.response) {
                 failedRequest.response.config.headers['Authorization'] =
-                    'Bearer ' + token
+                    'Bearer ' + accessToken
             }
             return Promise.resolve()
         })
 }
 
-// createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic)
+createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic,{statusCodes:[408]})
 
-axiosInstance.interceptors.request.use(function(config) {
-    const token = localStorage.getItem('token');
-    if(token) {
-        config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
-    }
-    return config
+axiosInstance.interceptors.request.use(function (config) {
+  if (localStorage.getItem('token') && !config?.url?.toLowerCase().includes('refresh')) {
+    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
+  }
+
+  // if (config?.url?.toLowerCase().includes('refresh')) {
+  //     config.data.token = localStorage.getItem(
+  //         'refreshToken')
+    // config.headers.Authorization = `Bearer ${localStorage.getItem(
+    //   'refreshToken',
+    // )}`
+  // }
+  return config
 })
+

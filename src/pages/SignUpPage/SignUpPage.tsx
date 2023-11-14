@@ -1,12 +1,12 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import {Link, Navigate, useNavigate} from 'react-router-dom';
 import styles from './SignUpPage.module.css';
 import Modal from 'react-modal';
 import {SiSurveymonkey} from "react-icons/si";
 import {BiSolidLockAlt} from "react-icons/bi";
 import {AiOutlineUser} from "react-icons/ai";
 import {LiaTelegramPlane} from "react-icons/lia"
-import {useState} from "react";
+import React, {useState} from "react";
 import {axiosInstance} from "../api";
 
 const customStyles = {
@@ -36,6 +36,11 @@ const SignUpPage = () => {
   } = useForm<Inputs>()
 const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false);
+  const userToken = localStorage.getItem('token')
+
+  if(userToken) {
+    return <Navigate to='/main' />
+  }
   function openModal() {
     setIsOpen(true);
   }
@@ -58,8 +63,9 @@ const navigate = useNavigate()
     }
     try {
       const response = await axiosInstance.post('/sign-up', requestBody)
-      localStorage.setItem('token',response.data.token);
+      localStorage.setItem('token',response.data.accessToken);
       localStorage.setItem('username',response.data.username);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
       console.log(response)
       navigate('/main');
     } catch (error) {

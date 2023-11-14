@@ -41,7 +41,7 @@ const router = createBrowserRouter([
   }
 ])
 
-// @ts-expect-error POTAMUSHTA!
+// @ts-expect-error 1!
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />

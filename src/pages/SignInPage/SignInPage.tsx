@@ -6,6 +6,7 @@ import {BiSolidLockAlt} from 'react-icons/bi'
 import Modal from 'react-modal';
 import React, {useState} from "react";
 import {axiosInstance} from "../api";
+let text = '';
 const customStyles = {
   content: {
     top: '50%',
@@ -53,14 +54,16 @@ const SignInPage = () => {
     }
     try {
       const response = await axiosInstance.post('/sign-in', requestBody)
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('token', response.data.accessToken);
       localStorage.setItem('username',response.data.username);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
       console.log(response)
       navigate('/main');
     } catch (error) {
       console.error(error)
       //@ts-ignore
       if (error?.response.status === 401 ){
+        text = ' Неверное имя пользователя или пароль.';
         openModal();
       }
     }
@@ -122,7 +125,8 @@ const SignInPage = () => {
       >
         <div
         className={styles.textModal}>
-          Неверное имя пользователя или пароль.</div>
+          {text}
+         </div>
         <button onClick={closeModal}
                 className={styles.signInButton}
         >Закрыть</button>

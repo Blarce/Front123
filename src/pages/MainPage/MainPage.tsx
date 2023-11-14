@@ -1,9 +1,10 @@
 import styles from './MainPage.module.css'
-import { Link } from 'react-router-dom'
+import {Link, Navigate, useNavigate} from 'react-router-dom'
 import Modal from 'react-modal'
-import { useState , useEffect } from 'react'
+import React, { useState , useEffect,  } from 'react'
 import {axiosInstance} from "../api";
-
+let count = 1;
+let number = 2;
 const customStyles = {
     content: {
         top: '50%',
@@ -15,10 +16,15 @@ const customStyles = {
     },
 };
 const MainPage= () => {
+    const navigate = useNavigate()
+    const [modalIsOpen, setIsOpen] = useState(false);
+    const userToken = localStorage.getItem('token')
     useEffect(() => {
         openModal();
-    }, []);
-    const [modalIsOpen, setIsOpen] = useState(false);
+    }, [count , number]);
+    if(!userToken) {
+        return <Navigate to='/sign-in' />
+    }
     function openModal() {
         setIsOpen(true);
     }
@@ -35,7 +41,9 @@ const MainPage= () => {
         } catch (error) {
             console.error(error)
         }
+        navigate('/sign-in')
     }
+
     return (
         <div className={styles.body}>
             <Link to='/sign-in'>
