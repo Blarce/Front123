@@ -9,7 +9,7 @@
 body, #root {
   height: 100vh;
   background-size: cover;
-  background: url("background_banana.png") no-repeat;
+  background-image: url("background_banana.png");
 }
 
 .ReactModal__Overlay.ReactModal__Overlay--after-open{

@@ -24,13 +24,15 @@ export const axiosInstance = axios.create({
         })
 }
 
-createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic,{statusCodes:[408, 401]})
+createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic,{statusCodes:[401]})
 
 axiosInstance.interceptors.request.use(function (config) {
   if (localStorage.getItem('token')) {
     config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
   }
-
+  if (config?.url?.toLowerCase().includes('refresh')) {
+      config.headers.Authorization = `${localStorage.getItem('refreshToken')}`
+  }
   return config
 })
 
