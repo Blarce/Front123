@@ -27,6 +27,11 @@ const MainPage = () => {
 
   useEffect(() => {
     openModal()
+    const getGoogleResponse = async () => {
+      const response = await axiosInstance.get('https://google.com')
+      console.log(response)
+    }
+    getGoogleResponse()
   }, [])
 
   if (!userToken) {
