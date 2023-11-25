@@ -38,6 +38,7 @@ const Header = () => {
       console.log(file.name)
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('fileName', file.name)
       const requestBody = {
         username: localStorage.getItem('username'),
         fullPath: 'admin/',
@@ -45,7 +46,11 @@ const Header = () => {
       }
       // const fullPAth = `/${file.name}`
       try {
-        const response = await axiosInstance.post('/uploadFile', requestBody)
+        const response = await axiosInstance.post('/uploadFile', requestBody, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
         //@ts-ignore
         const data = await response.json()
         //console.log(data);
