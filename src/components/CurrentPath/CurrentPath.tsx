@@ -1,5 +1,5 @@
 const CurrentPath = () => {
-  return <div>CurrentUser/Path/To/File</div>
+  return <div>{localStorage.getItem('username')}</div>
 }
 
 export { CurrentPath }

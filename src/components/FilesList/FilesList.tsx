@@ -13,6 +13,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { axiosInstance } from '../../api'
 
 const rows = [
   {
@@ -48,6 +49,43 @@ const FilesList = () => {
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const configForDelete = {
+    params: {
+      username: localStorage.getItem('username'),
+      fullPath: '',
+    },
+  }
+
+  const handleMenuCloseForDelete = async () => {
+    try {
+      const response = await axiosInstance.delete(
+        '/deleteFile',
+        configForDelete,
+      )
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
+    handleClose()
+  }
+
+  const dataForRename = {
+    username: localStorage.getItem('username'),
+    fullPath: '',
+    oldName: 'sd.jpg',
+    //TODO Нельзя давать пользователю менять расширение файла
+    newName: 'sss.jpg',
+  }
+  const handleMenuCloseForRename = async () => {
+    try {
+      const response = await axiosInstance.put('/renameFile', dataForRename)
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
+    handleClose()
   }
 
   const handleMenuClose = () => handleClose()
@@ -94,9 +132,13 @@ const FilesList = () => {
                     'aria-labelledby': 'basic-button',
                   }}
                 >
-                  <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-                  <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+                  <MenuItem onClick={handleMenuClose}>Скачать</MenuItem>
+                  <MenuItem onClick={handleMenuCloseForRename}>
+                    Переименовать
+                  </MenuItem>
+                  <MenuItem onClick={handleMenuCloseForDelete}>
+                    Удалить
+                  </MenuItem>
                 </Menu>
               </TableCell>
             </TableRow>

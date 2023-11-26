@@ -25,13 +25,58 @@ const MainPage = () => {
   const [modalIsOpen, setIsOpen] = useState(false)
   const userToken = localStorage.getItem('token')
 
-  useEffect(() => {
-    openModal()
-    const getGoogleResponse = async () => {
-      const response = await axiosInstance.get('https://google.com')
+  //const [ files,setFiles] = useState([])
+
+  const config = {
+    params: {
+      username: localStorage.getItem('username'),
+      folder: '',
+    },
+  }
+  const getUploadFiles = async () => {
+    const response = await axiosInstance.get('/getFiles', config)
+    console.log(response)
+  }
+
+  const dataForDeleteFolder = {
+    params: {
+      username: localStorage.getItem('username'),
+      fullPath: '123',
+    },
+  }
+  const handleMenuCloseForDeleteFolder = async () => {
+    try {
+      const response = await axiosInstance.delete(
+        '/deleteFolder',
+        dataForDeleteFolder,
+      )
       console.log(response)
+    } catch (error) {
+      console.error(error)
     }
-    getGoogleResponse()
+  }
+
+  const dataForRename = {
+    username: localStorage.getItem('username'),
+    oldName: '123',
+    //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
+    newName: '321',
+    fullPath: '',
+  }
+  const handleMenuCloseForRename = async () => {
+    try {
+      const response = await axiosInstance.put('/renameFolder', dataForRename)
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    //handleMenuCloseForRename()
+    //openModal()
+    getUploadFiles()
+    //handleMenuCloseForDeleteFolder()
   }, [])
 
   if (!userToken) {

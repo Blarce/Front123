@@ -18,6 +18,9 @@ import styles from './Header.module.scss'
 
 //TODO Вставить картинку 133
 
+let world = 'penis.jpg'
+let CHLEN = world.substring(world.lastIndexOf('.'))
+console.log(CHLEN)
 const Header = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -40,19 +43,20 @@ const Header = () => {
       formData.append('file', file)
       formData.append('fileName', file.name)
       const requestBody = {
-        username: localStorage.getItem('username'),
-        fullPath: 'admin/',
+        // username: localStorage.getItem('username'),
+        // fullPath: '',
         multipartFile: formData,
       }
-      // const fullPAth = `/${file.name}`
+      //const fullPAth = `/${file.name}
       try {
         const response = await axiosInstance.post('/uploadFile', requestBody, {
           headers: {
+            'Content-Length': file.size,
             'Content-Type': 'multipart/form-data',
           },
         })
         //@ts-ignore
-        const data = await response.json()
+        //const data = await response.json()
         //console.log(data);
         console.log(response)
       } catch (error) {
