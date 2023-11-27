@@ -18,13 +18,16 @@ import { axiosInstance } from '../../api'
 const FilesList = () => {
   const [files, setFiles] = useState([])
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
+  const handleClick =
+    (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
+      const nextMenus = menus
+      // @ts-ignore
+      nextMenus[index] = true
+      setMenus(nextMenus)
+      setAnchorEl(event.currentTarget)
+    }
 
   const configForDelete = {
     params: {
@@ -42,15 +45,25 @@ const FilesList = () => {
 
   const getUploadFiles = async () => {
     const response = await axiosInstance.get('/getFiles', config)
-    console.log(response)
+    // console.log(response)
     setFiles(response.data.list)
+    const menus = response.data.list.map((m: any) => false)
+    setMenus(menus)
   }
 
   useEffect(() => {
     getUploadFiles()
   }, [])
 
-  const handleMenuCloseForDelete = async () => {
+  const handleMenuClose = (index: number) => () => {
+    const nextMenus = menus
+    // @ts-ignore
+    nextMenus[index] = false
+    setMenus(nextMenus)
+    setAnchorEl(null)
+  }
+
+  const handleMenuCloseForDelete = (index: number) => async () => {
     try {
       const response = await axiosInstance.delete(
         '/deleteFile',
@@ -60,7 +73,7 @@ const FilesList = () => {
     } catch (error) {
       console.error(error)
     }
-    handleClose()
+    handleMenuClose(index)
   }
 
   const dataForRename = {
@@ -70,18 +83,17 @@ const FilesList = () => {
     //TODO Нельзя давать пользователю менять расширение файла
     newName: 'Кусок дерьма.docx',
   }
-  const handleMenuCloseForRename = async (file: any) => {
-    console.log(file)
-    try {
-      const response = await axiosInstance.put('/renameFile', dataForRename)
-      console.log(response)
-    } catch (error) {
-      console.error(error)
-    }
-    handleClose()
+  const handleMenuCloseForRename = (index: number) => () => {
+    console.log(files[index])
+    // try {
+    //   const response = await axiosInstance.put('/renameFile', dataForRename)
+    //   console.log(response)
+    // } catch (error) {
+    //   console.error(error)
+    // }
+    // handleClose()
   }
 
-  const handleMenuClose = () => handleClose()
   if (!files.length) {
     return <div>LOADING...</div>
   }
@@ -90,7 +102,7 @@ const FilesList = () => {
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
         <TableBody>
-          {files.map((file: any) => (
+          {files.map((file: any, index) => (
             <TableRow
               //Поставить on click и проверить is dir //set files // вызывать функцию
               key={file.name}
@@ -116,24 +128,24 @@ const FilesList = () => {
                   aria-controls={open ? 'basic-menu' : undefined}
                   aria-haspopup='true'
                   aria-expanded={open ? 'true' : undefined}
-                  onClick={handleClick}
+                  onClick={handleClick(index)}
                 >
                   <MoreVertIcon />
                 </IconButton>
                 <Menu
                   id='basic-menu'
                   anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleMenuClose}
+                  open={menus[index]}
+                  onClose={handleMenuClose(index)}
                   MenuListProps={{
                     'aria-labelledby': 'basic-button',
                   }}
                 >
-                  <MenuItem onClick={handleMenuClose}>Скачать</MenuItem>
-                  <MenuItem onClick={() => handleMenuCloseForRename(file)}>
+                  <MenuItem onClick={handleMenuClose(index)}>Скачать</MenuItem>
+                  <MenuItem onClick={handleMenuCloseForRename(index)}>
                     Переименовать
                   </MenuItem>
-                  <MenuItem onClick={handleMenuCloseForDelete}>
+                  <MenuItem onClick={handleMenuCloseForDelete(index)}>
                     Удалить
                   </MenuItem>
                 </Menu>
