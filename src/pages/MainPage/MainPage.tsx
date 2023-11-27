@@ -25,23 +25,10 @@ const MainPage = () => {
   const [modalIsOpen, setIsOpen] = useState(false)
   const userToken = localStorage.getItem('token')
 
-  //const [ files,setFiles] = useState([])
-
-  const config = {
-    params: {
-      username: localStorage.getItem('username'),
-      folder: '',
-    },
-  }
-  const getUploadFiles = async () => {
-    const response = await axiosInstance.get('/getFiles', config)
-    console.log(response)
-  }
-
   const dataForDeleteFolder = {
     params: {
       username: localStorage.getItem('username'),
-      fullPath: '123',
+      fullPath: '228',
     },
   }
   const handleMenuCloseForDeleteFolder = async () => {
@@ -58,10 +45,10 @@ const MainPage = () => {
 
   const dataForRename = {
     username: localStorage.getItem('username'),
-    oldName: '123',
+    fullPath: '228/',
+    oldName: '23',
     //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
-    newName: '321',
-    fullPath: '',
+    newName: '444',
   }
   const handleMenuCloseForRename = async () => {
     try {
@@ -75,7 +62,7 @@ const MainPage = () => {
   useEffect(() => {
     //handleMenuCloseForRename()
     //openModal()
-    getUploadFiles()
+    //getUploadFiles()
     //handleMenuCloseForDeleteFolder()
   }, [])
 

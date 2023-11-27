@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   IconButton,
   Paper,
@@ -15,33 +15,8 @@ import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { axiosInstance } from '../../api'
 
-const rows = [
-  {
-    type: 'folder',
-    icon: 'File Icon WIll be here',
-    title: 'Title2222',
-    userName: 'Some User',
-    createdAd: '13.06.2021',
-  },
-  {
-    type: 'file',
-    icon: 'File Icon WIll be here',
-    title: 'Title1',
-    userName: 'Another user',
-    createdAd: '25.02.2022',
-    size: '19mb',
-  },
-  {
-    type: 'file',
-    icon: 'File Icon WIll be here',
-    title: 'Title3',
-    userName: 'Some User again',
-    createdAd: '15.02.2022',
-    size: '19mb',
-  },
-]
-
 const FilesList = () => {
+  const [files, setFiles] = useState([])
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -54,9 +29,26 @@ const FilesList = () => {
   const configForDelete = {
     params: {
       username: localStorage.getItem('username'),
-      fullPath: '',
+      fullPath: '123/Лист Microsoft Excel.xlsx',
     },
   }
+
+  const config = {
+    params: {
+      username: localStorage.getItem('username'),
+      folder: '',
+    },
+  }
+
+  const getUploadFiles = async () => {
+    const response = await axiosInstance.get('/getFiles', config)
+    console.log(response)
+    setFiles(response.data.list)
+  }
+
+  useEffect(() => {
+    getUploadFiles()
+  }, [])
 
   const handleMenuCloseForDelete = async () => {
     try {
@@ -73,12 +65,13 @@ const FilesList = () => {
 
   const dataForRename = {
     username: localStorage.getItem('username'),
-    fullPath: '',
-    oldName: 'sd.jpg',
+    fullPath: '123/',
+    oldName: 'Метрология (метода).docx',
     //TODO Нельзя давать пользователю менять расширение файла
-    newName: 'sss.jpg',
+    newName: 'Кусок дерьма.docx',
   }
-  const handleMenuCloseForRename = async () => {
+  const handleMenuCloseForRename = async (file: any) => {
+    console.log(file)
     try {
       const response = await axiosInstance.put('/renameFile', dataForRename)
       console.log(response)
@@ -89,27 +82,31 @@ const FilesList = () => {
   }
 
   const handleMenuClose = () => handleClose()
+  if (!files.length) {
+    return <div>LOADING...</div>
+  }
 
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
         <TableBody>
-          {rows.map(({ type, title, icon, size, userName, createdAd }) => (
+          {files.map((file: any) => (
             <TableRow
-              key={title}
+              //Поставить on click и проверить is dir //set files // вызывать функцию
+              key={file.name}
               sx={{
                 '&:last-child td, &:last-child th': { border: 0 },
                 verticalAlign: 'baseline',
               }}
             >
-              {type === 'folder' ? <FolderIcon /> : <PictureAsPdfIcon />}
+              {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
               <TableCell component='th' scope='row'>
-                {title}
+                {file.name}
               </TableCell>
-              <TableCell align='left'>{userName}</TableCell>
-              <TableCell align='left'>{createdAd}</TableCell>
-              {type !== 'folder' ? (
-                <TableCell align='left'>{size}</TableCell>
+              <TableCell align='left'>{file.username}</TableCell>
+              <TableCell align='left'>{file.data}</TableCell>
+              {file.isDir !== 'folder' ? (
+                <TableCell align='left'>{file.size}</TableCell>
               ) : (
                 <TableCell align='left'></TableCell>
               )}
@@ -133,7 +130,7 @@ const FilesList = () => {
                   }}
                 >
                   <MenuItem onClick={handleMenuClose}>Скачать</MenuItem>
-                  <MenuItem onClick={handleMenuCloseForRename}>
+                  <MenuItem onClick={() => handleMenuCloseForRename(file)}>
                     Переименовать
                   </MenuItem>
                   <MenuItem onClick={handleMenuCloseForDelete}>
