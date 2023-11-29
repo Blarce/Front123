@@ -48,7 +48,6 @@ const Header = () => {
       try {
         const response = await axiosInstance.post('/uploadFile', requestBody, {
           headers: {
-            'Content-Length': file.size,
             'Content-Type': 'multipart/form-data',
           },
         })

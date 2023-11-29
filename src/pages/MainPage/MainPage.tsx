@@ -24,8 +24,10 @@ const customStyles = {
 const MainPage = () => {
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
+  const [currentPath, setCurrentPath] = useState(
+    localStorage.getItem('username') || '',
+  )
   const userToken = localStorage.getItem('token')
-
   const dataForDeleteFolder = {
     params: {
       username: localStorage.getItem('username'),
@@ -107,8 +109,8 @@ const MainPage = () => {
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
-        <CurrentPath />
-        <FilesList />
+        <CurrentPath currentPath={currentPath} />
+        <FilesList setCurrentPath={setCurrentPath} />
       </Grid>
     </Grid>
   )

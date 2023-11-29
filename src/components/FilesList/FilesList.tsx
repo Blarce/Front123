@@ -33,7 +33,11 @@ const style = {
   p: 4,
 }
 
-const FilesList = () => {
+const FilesList = ({
+  setCurrentPath,
+}: {
+  setCurrentPath: (currentPath: string) => void
+}) => {
   const location: any = useLocation()
   const [files, setFiles] = useState([])
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -54,12 +58,26 @@ const FilesList = () => {
   const config = {
     params: {
       username: localStorage.getItem('username'),
-      folder: '123/',
+      folder: '',
     },
   }
 
   const getUploadFiles = async () => {
     const response = await axiosInstance.get('/getFiles', config)
+    // console.log(response)
+    setFiles(response.data.list)
+    const menus = response.data.list.map((m: any) => false)
+    setMenus(menus)
+  }
+
+  const handleTableRowClick = (file: any) => async () => {
+    const response = await axiosInstance.get('/getFiles', {
+      params: {
+        username: localStorage.getItem('username'),
+        folder: '123/',
+      },
+    })
+    setCurrentPath(response.data.list[0].breadCrums)
     // console.log(response)
     setFiles(response.data.list)
     const menus = response.data.list.map((m: any) => false)
@@ -112,7 +130,7 @@ const FilesList = () => {
     if (files[index].breadCrums === localStorage.getItem('username')) {
       cutPath = ''
     } else {
-      cutPath = path.substring(path.indexOf('/')).substring(1) + '/'
+      cutPath = path.substring(path.indexOf('/') + 1) + '/'
     }
     //@ts-ignore
     console.log(cutPath)
@@ -145,6 +163,7 @@ const FilesList = () => {
         <TableBody>
           {files.map((file: any, index) => (
             <TableRow
+              onClick={handleTableRowClick(file)}
               //Поставить on click и проверить is dir //set files // вызывать функцию
               key={file.name}
               sx={{
