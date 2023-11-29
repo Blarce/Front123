@@ -18,9 +18,6 @@ import styles from './Header.module.scss'
 
 //TODO Вставить картинку 133
 
-let world = 'penis.jpg'
-let CHLEN = world.substring(world.lastIndexOf('.'))
-console.log(CHLEN)
 const Header = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(

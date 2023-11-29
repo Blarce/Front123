@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
+  Button,
   IconButton,
   Paper,
   Table,
@@ -7,19 +8,40 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  TextField,
 } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import FolderIcon from '@mui/icons-material/Folder'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { axiosInstance } from '../../api'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { useLocation } from 'react-router-dom'
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+}
 
 const FilesList = () => {
+  const location: any = useLocation()
   const [files, setFiles] = useState([])
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
+  const [openModal, setOpen] = React.useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
   const handleClick =
     (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
       const nextMenus = menus
@@ -29,17 +51,10 @@ const FilesList = () => {
       setAnchorEl(event.currentTarget)
     }
 
-  const configForDelete = {
-    params: {
-      username: localStorage.getItem('username'),
-      fullPath: '123/Лист Microsoft Excel.xlsx',
-    },
-  }
-
   const config = {
     params: {
       username: localStorage.getItem('username'),
-      folder: '',
+      folder: '123/',
     },
   }
 
@@ -50,6 +65,10 @@ const FilesList = () => {
     const menus = response.data.list.map((m: any) => false)
     setMenus(menus)
   }
+  //@ts-ignore
+  // const GetFilesFromFolder = (index: number) => async () => {
+  //   if (files[index].)
+  // }
 
   useEffect(() => {
     getUploadFiles()
@@ -65,42 +84,64 @@ const FilesList = () => {
 
   const handleMenuCloseForDelete = (index: number) => async () => {
     try {
-      const response = await axiosInstance.delete(
-        '/deleteFile',
-        configForDelete,
-      )
+      const response = await axiosInstance.delete('/deleteFile', {
+        params: {
+          username: localStorage.getItem('username'),
+          //@ts-ignore
+          fullPath: files[index].path,
+        },
+      })
       console.log(response)
     } catch (error) {
       console.error(error)
     }
+    setFiles(files)
+    getUploadFiles()
     handleMenuClose(index)
   }
 
-  const dataForRename = {
-    username: localStorage.getItem('username'),
-    fullPath: '123/',
-    oldName: 'Метрология (метода).docx',
-    //TODO Нельзя давать пользователю менять расширение файла
-    newName: 'Кусок дерьма.docx',
-  }
-  const handleMenuCloseForRename = (index: number) => () => {
+  const responseForRenameFile = (index: number) => () => {
+    const renameFile = document.getElementById('rename') as HTMLInputElement
+    //@ts-ignore
+    const file = files[index].name
+    const extension = file.substring(file.lastIndexOf('.'))
+    //@ts-ignore
+    const path = files[index].breadCrums
+    let cutPath = ''
+    //@ts-ignore
+    if (files[index].breadCrums === localStorage.getItem('username')) {
+      cutPath = ''
+    } else {
+      cutPath = path.substring(path.indexOf('/')).substring(1) + '/'
+    }
+    //@ts-ignore
+    console.log(cutPath)
+    const requestBody = {
+      username: localStorage.getItem('username'),
+      fullPath: cutPath,
+      //@ts-ignore
+      oldName: files[index].name,
+      //TODO Нельзя давать пользователю менять расширение файла
+      //@ts-ignore
+      newName: renameFile.value + extension,
+    }
     console.log(files[index])
-    // try {
-    //   const response = await axiosInstance.put('/renameFile', dataForRename)
-    //   console.log(response)
-    // } catch (error) {
-    //   console.error(error)
-    // }
-    // handleClose()
+    try {
+      const response = axiosInstance.put('/renameFile', requestBody)
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
+    setFiles(files)
+    getUploadFiles()
+    handleClose()
   }
-
   if (!files.length) {
-    return <div>LOADING...</div>
+    return <div>Папка пуста. Загрузите файлы.</div>
   }
-
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+      <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
           {files.map((file: any, index) => (
             <TableRow
@@ -117,10 +158,10 @@ const FilesList = () => {
               </TableCell>
               <TableCell align='left'>{file.username}</TableCell>
               <TableCell align='left'>{file.data}</TableCell>
-              {file.isDir !== 'folder' ? (
+              {file.isDir !== true ? (
                 <TableCell align='left'>{file.size}</TableCell>
               ) : (
-                <TableCell align='left'></TableCell>
+                <TableCell align='left'>‒</TableCell>
               )}
               <TableCell align='right'>
                 <IconButton
@@ -142,12 +183,37 @@ const FilesList = () => {
                   }}
                 >
                   <MenuItem onClick={handleMenuClose(index)}>Скачать</MenuItem>
-                  <MenuItem onClick={handleMenuCloseForRename(index)}>
-                    Переименовать
-                  </MenuItem>
+                  <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
                   <MenuItem onClick={handleMenuCloseForDelete(index)}>
                     Удалить
                   </MenuItem>
+                  <Modal
+                    open={openModal}
+                    aria-labelledby='modal-modal-title'
+                    aria-describedby='modal-modal-description'
+                  >
+                    <Box sx={style}>
+                      <Typography
+                        id='modal-modal-title'
+                        variant='h6'
+                        component='h2'
+                      >
+                        Переименовать
+                      </Typography>
+                      <TextField fullWidth id='rename' />
+                      <Button onClick={handleClose} variant='text'>
+                        Отмена
+                      </Button>
+                      <Button
+                        //@ts-ignore
+                        onClick={responseForRenameFile(index)}
+                        type='submit'
+                        variant='contained'
+                      >
+                        Ок
+                      </Button>
+                    </Box>
+                  </Modal>
                 </Menu>
               </TableCell>
             </TableRow>
@@ -158,3 +224,4 @@ const FilesList = () => {
   )
 }
 export { FilesList }
+//handleMenuCloseForRename(index)

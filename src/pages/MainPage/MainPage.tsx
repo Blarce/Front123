@@ -8,6 +8,7 @@ import { Grid } from '@mui/material'
 import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
 import { FilesList } from '../../components/FilesList/FilesList'
+import Modal from '@mui/material/Modal'
 
 const customStyles = {
   content: {
