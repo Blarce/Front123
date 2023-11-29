@@ -9,6 +9,7 @@ import {
   TableContainer,
   TableRow,
   TextField,
+  Container,
 } from '@mui/material'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -19,8 +20,9 @@ import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { axiosInstance } from '../../api'
-import { SubmitHandler, useForm } from 'react-hook-form'
 import { useLocation } from 'react-router-dom'
+import { inspect } from 'util'
+import styles from './FilesList.module.scss'
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -44,7 +46,9 @@ const FilesList = ({
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
   const [openModal, setOpen] = React.useState(false)
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => {
+    setOpen(true)
+  }
   const handleClose = () => setOpen(false)
   const handleClick =
     (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -118,7 +122,7 @@ const FilesList = ({
     handleMenuClose(index)
   }
 
-  const responseForRenameFile = (index: number) => () => {
+  const responseForRenameFile = (index: number) => async () => {
     const renameFile = document.getElementById('rename') as HTMLInputElement
     //@ts-ignore
     const file = files[index].name
@@ -145,12 +149,14 @@ const FilesList = ({
     }
     console.log(files[index])
     try {
-      const response = axiosInstance.put('/renameFile', requestBody)
-      console.log(response)
+      const response = await axiosInstance.put('/renameFile', requestBody)
+      const nextFiles = structuredClone(files)
+      //@ts-ignore
+      nextFiles[index].name = renameFile.value + extension
+      setFiles(nextFiles)
     } catch (error) {
       console.error(error)
     }
-    setFiles(files)
     getUploadFiles()
     handleClose()
   }
@@ -163,7 +169,6 @@ const FilesList = ({
         <TableBody>
           {files.map((file: any, index) => (
             <TableRow
-              onClick={handleTableRowClick(file)}
               //Поставить on click и проверить is dir //set files // вызывать функцию
               key={file.name}
               sx={{
@@ -171,17 +176,22 @@ const FilesList = ({
                 verticalAlign: 'baseline',
               }}
             >
-              {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-              <TableCell component='th' scope='row'>
-                {file.name}
-              </TableCell>
-              <TableCell align='left'>{file.username}</TableCell>
-              <TableCell align='left'>{file.data}</TableCell>
-              {file.isDir !== true ? (
-                <TableCell align='left'>{file.size}</TableCell>
-              ) : (
-                <TableCell align='left'>‒</TableCell>
-              )}
+              <Container
+                onClick={handleTableRowClick(file)}
+                className={styles.TableRowInnerContainer}
+              >
+                {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
+                <TableCell component='th' scope='row'>
+                  {file.name}
+                </TableCell>
+                <TableCell align='left'>{file.username}</TableCell>
+                <TableCell align='left'>{file.data}</TableCell>
+                {file.isDir !== true ? (
+                  <TableCell align='left'>{file.size}</TableCell>
+                ) : (
+                  <TableCell align='left'>‒</TableCell>
+                )}
+              </Container>
               <TableCell align='right'>
                 <IconButton
                   id='basic-button'
@@ -193,6 +203,7 @@ const FilesList = ({
                   <MoreVertIcon />
                 </IconButton>
                 <Menu
+                  onClick={(event) => console.log(event)}
                   id='basic-menu'
                   anchorEl={anchorEl}
                   open={menus[index]}
