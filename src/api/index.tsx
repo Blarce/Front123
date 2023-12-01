@@ -12,13 +12,7 @@ export const axiosInstance = axios.create({
   },
 })
 
-export const getFiles = async ({
-  setFiles,
-  setMenus,
-}: {
-  setFiles: (files: any) => void
-  setMenus: (menus: any) => void
-}) => {
+export const getFiles = async () => {
   const response = await axiosInstance.get('/getFiles', {
     params: {
       username: localStorage.getItem('username'),
@@ -26,16 +20,14 @@ export const getFiles = async ({
     },
   })
 
-  const nextFiles = response.data.list
-
   // console.log(response)
-  setFiles(nextFiles)
+  // setFiles(nextFiles)
 
-  const menus = response.data.list.map((m: any) => false)
+  // const menus = response.data.list.map((m: any) => false)
 
-  setMenus(menus)
+  // setMenus(menus)
 
-  return nextFiles
+  return response.data.list
 }
 
 export const refreshAuthLogic = (failedRequest: AxiosError) => {

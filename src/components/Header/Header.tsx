@@ -55,7 +55,7 @@ const Header = () => {
             'Content-Type': 'multipart/form-data',
           },
         })
-        await getFiles({ setFiles, setMenus })
+        await getFiles().then((files) => setFiles(files))
 
         //const data = await response.json()
         //console.log(data);
