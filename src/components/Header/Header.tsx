@@ -51,7 +51,7 @@ const Header = ({ setFiles }: { setFiles: (files: any) => void }) => {
             'Content-Type': 'multipart/form-data',
           },
         })
-
+        const nextFiles = getFiles()
         setFiles((state: any) => [...state, file])
 
         //const data = await response.json()

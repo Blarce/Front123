@@ -60,21 +60,6 @@ const FilesList = ({
       setAnchorEl(event.currentTarget)
     }
 
-  const config = {
-    params: {
-      username: localStorage.getItem('username'),
-      folder: '',
-    },
-  }
-
-  const getUploadFiles = async () => {
-    const response = await axiosInstance.get('/getFiles', config)
-    // console.log(response)
-    setFiles(response.data.list)
-    const menus = response.data.list.map((m: any) => false)
-    setMenus(menus)
-  }
-
   const handleTableRowClick = (file: any) => async () => {
     const response = await axiosInstance.get('/getFiles', {
       params: {
@@ -94,7 +79,7 @@ const FilesList = ({
   // }
 
   useEffect(() => {
-    getUploadFiles()
+    getFiles()
   }, [])
 
   const handleMenuClose = (index: number) => () => {
@@ -119,7 +104,7 @@ const FilesList = ({
       console.error(error)
     }
     setFiles(files)
-    getUploadFiles()
+    getFiles()
     handleMenuClose(index)
   }
 
@@ -158,7 +143,7 @@ const FilesList = ({
     } catch (error) {
       console.error(error)
     }
-    getUploadFiles()
+    getFiles()
     handleClose()
   }
   if (!files.length) {
