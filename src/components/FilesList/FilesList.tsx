@@ -10,6 +10,7 @@ import {
   TableContainer,
   TableRow,
   TextField,
+  Checkbox,
 } from '@mui/material'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -24,6 +25,10 @@ import styles from './FilesList.module.scss'
 import { useMenus } from '../../hooks/useMenus'
 import { useGetFilesQuery, useLazyGetFilesQuery } from '../../store/filesSlice'
 import { IFile } from '../../store/types'
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
+import Favorite from '@mui/icons-material/Favorite'
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
+import BookmarkIcon from '@mui/icons-material/Bookmark'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -39,17 +44,18 @@ const style = {
 
 const FilesList = ({
   setCurrentPath, // files,
-  // setFiles,
-}: {
+} // setFiles,
+: {
   setCurrentPath: (currentPath: string) => void
 }) => {
+  const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
   const { data, error, isLoading } = useGetFilesQuery('')
   const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const { menus, setMenus } = useMenus()
   const open = Boolean(anchorEl)
   const [openModal, setOpen] = React.useState(false)
-
+  const username = localStorage.getItem('username')
   const handleOpen = () => {
     setOpen(true)
   }
@@ -63,8 +69,35 @@ const FilesList = ({
       setAnchorEl(event.currentTarget)
     }
 
+  const FavoriteFileRequest =
+    (file: IFile, label: any, index: number) => async () => {
+      if (file.isFavorite) {
+        label = { inputProps: { 'aria-label': 'Checkbox demo' } }
+      } else {
+        try {
+          const response = await axiosInstance.post('/addToFavorite', {
+            username: username,
+            // @ts-ignore
+            fullPath: '333.png',
+          })
+          console.log(response)
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
+
   const handleTableRowClick = (file: IFile) => async () => {
-    await triggerGetFiles('123/')
+    let headerPath = ''
+    if (file.breadCrums === username) {
+      headerPath = ''
+    } else {
+      headerPath = file.breadCrums
+    }
+    console.log(headerPath)
+    if (file.isDir) {
+      await triggerGetFiles('123/')
+    }
     console.log(result)
     // const response = await axiosInstance.get('/getFiles', {
     //   params: {
@@ -72,7 +105,7 @@ const FilesList = ({
     //     folder: '123/',
     //   },
     // })
-    // setCurrentPath(response.data.list[0].breadCrums)
+    setCurrentPath(file.breadCrums)
     // // console.log(response)
     // const menus = response.data.list.map((m: any) => false)
     // setMenus(menus)
@@ -92,13 +125,13 @@ const FilesList = ({
 
   const handleMenuCloseForDelete = (index: number) => async () => {
     // @ts-ignore
-    if (files[index].isDir) {
+    if (data.list[index].isDir === true) {
       try {
         const response = await axiosInstance.delete('/deleteFolder', {
           params: {
-            username: localStorage.getItem('username'),
+            username: username,
             // @ts-ignore
-            fullPath: files[index].path,
+            fullPath: data.list[index].path,
           },
         })
         console.log(response)
@@ -109,9 +142,9 @@ const FilesList = ({
       try {
         const response = await axiosInstance.delete('/deleteFile', {
           params: {
-            username: localStorage.getItem('username'),
+            username: username,
             //@ts-ignore
-            fullPath: files[index].path,
+            fullPath: data.list[index].path,
           },
         })
         console.log(response)
@@ -125,36 +158,48 @@ const FilesList = ({
   const responseForRenameFile = (index: number) => async () => {
     const renameFile = document.getElementById('rename') as HTMLInputElement
     //@ts-ignore
-    const fileName = files[index].name
+    const fileName = data.list[index].name
     const extension = fileName.substring(fileName.lastIndexOf('.'))
     //@ts-ignore
-    const path = files[index].breadCrums
+    const path = data.list[index].breadCrums
     let cutPath = ''
     //@ts-ignore
-    if (files[index].breadCrums === localStorage.getItem('username')) {
+    if (data.list[index].breadCrums === localStorage.getItem('username')) {
       cutPath = ''
     } else {
       cutPath = path.substring(path.indexOf('/') + 1) + '/'
     }
     //@ts-ignore
-    console.log(cutPath)
-    const requestBody = {
-      username: localStorage.getItem('username'),
-      fullPath: cutPath,
-      //@ts-ignore
-      oldName: files[index].name,
-      //TODO Нельзя давать пользователю менять расширение файла
-      //@ts-ignore
-      newName: renameFile.value + extension,
-    }
-    //@ts-ignore
-    console.log(files[index].isDir)
-    try {
-      const response = await axiosInstance.put('/renameFile', requestBody)
-      //@ts-ignore
-      //nextFiles[index].name = renameFile.value + extension
-    } catch (error) {
-      console.error(error)
+    if (data.list[index].isDir === true) {
+      try {
+        const response = await axiosInstance.put('/renameFolder', {
+          username: username,
+          fullPath: cutPath,
+          //@ts-ignore
+          oldName: data.list[index].name,
+          //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
+          newName: renameFile.value,
+        })
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      try {
+        const response = await axiosInstance.put('/renameFile', {
+          username: username,
+          fullPath: cutPath,
+          //@ts-ignore
+          oldName: data.list[index].name,
+          //TODO Нельзя давать пользователю менять расширение файла
+          //@ts-ignore
+          newName: renameFile.value + extension,
+        })
+        //@ts-ignore
+        data.list[index].name = renameFile.value + extension
+      } catch (error) {
+        console.error(error)
+      }
     }
     handleClose()
   }
@@ -189,6 +234,17 @@ const FilesList = ({
                 ) : (
                   <TableCell align='left'>‒</TableCell>
                 )}
+              </Container>
+              <Container>
+                <Checkbox
+                  //@ts-ignore
+                  onClick={FavoriteFileRequest(index)}
+                  className={styles.TableRowInnerFavorite}
+                  {...label}
+                  id='favorite'
+                  icon={<FavoriteBorder />}
+                  checkedIcon={<Favorite />}
+                />
               </Container>
               <TableCell align='right'>
                 <IconButton

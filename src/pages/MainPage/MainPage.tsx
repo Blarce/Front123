@@ -9,7 +9,7 @@ import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
 import { FilesList } from '../../components/FilesList/FilesList'
 import Modal from '@mui/material/Modal'
-import { useFiles } from '../../hooks/useFiles'
+import { IFile } from '../../store/types'
 
 const customStyles = {
   content: {
@@ -25,51 +25,14 @@ const customStyles = {
 const MainPage = () => {
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
-  const { files, setFiles } = useFiles()
 
   const [currentPath, setCurrentPath] = useState(
     localStorage.getItem('username') || '',
   )
   const userToken = localStorage.getItem('token')
-  const dataForDeleteFolder = {
-    params: {
-      username: localStorage.getItem('username'),
-      fullPath: '228',
-    },
-  }
-  const handleMenuCloseForDeleteFolder = async () => {
-    try {
-      const response = await axiosInstance.delete(
-        '/deleteFolder',
-        dataForDeleteFolder,
-      )
-      console.log(response)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const dataForRename = {
-    username: localStorage.getItem('username'),
-    fullPath: '228/',
-    oldName: '23',
-    //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
-    newName: '444',
-  }
-  const handleMenuCloseForRename = async () => {
-    try {
-      const response = await axiosInstance.put('/renameFolder', dataForRename)
-      console.log(response)
-    } catch (error) {
-      console.error(error)
-    }
-  }
 
   useEffect(() => {
-    //handleMenuCloseForRename()
     //openModal()
-    //getUploadFiles()
-    //handleMenuCloseForDeleteFolder()
   }, [])
 
   if (!userToken) {

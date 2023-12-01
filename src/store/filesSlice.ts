@@ -37,6 +37,7 @@ const axiosBaseQuery =
 // Define a service using a base URL and expected endpoints
 export const filesApi = createApi({
   reducerPath: 'FILES',
+  tagTypes: ['FILES'],
   baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:8080' }),
   endpoints: (builder) => ({
     getFiles: builder.query<Files, string>({
@@ -45,7 +46,7 @@ export const filesApi = createApi({
         method: 'get',
         params: {
           username: localStorage.getItem('username'),
-          folder: path,
+          folder: '',
         },
       }),
     }),

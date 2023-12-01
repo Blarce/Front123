@@ -1,6 +1,5 @@
 import axios, { AxiosError } from 'axios'
 import createAuthRefreshInterceptor from 'axios-auth-refresh'
-import { useFiles } from '../hooks/useFiles'
 import { useMenus } from '../hooks/useMenus'
 
 export const axiosInstance = axios.create({

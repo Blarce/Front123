@@ -15,7 +15,6 @@ import MenuItem from '@mui/material/MenuItem'
 import AdbIcon from '@mui/icons-material/Adb'
 import { Button, TextField } from '@mui/material'
 import styles from './Header.module.scss'
-import { useFiles } from '../../hooks/useFiles'
 import { useMenus } from '../../hooks/useMenus'
 
 //TODO Вставить картинку 133
@@ -25,7 +24,6 @@ const Header = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
   )
-  const { setFiles } = useFiles()
   const { setMenus } = useMenus()
   const navigate = useNavigate()
   const [file, setFile] = useState<File | null>(null)
@@ -48,17 +46,14 @@ const Header = () => {
         // fullPath: '',
         multipartFile: formData,
       }
-      //const fullPAth = `/${file.name}
       try {
         const response = await axiosInstance.post('/uploadFile', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         })
-        await getFiles().then((files) => setFiles(files))
-
+        // await getFiles().then((files) => setFiles(files))
         //const data = await response.json()
-        //console.log(data);
         console.log(response)
       } catch (error) {
         console.error(error)
