@@ -23,6 +23,7 @@ import { axiosInstance, getFiles } from '../../api'
 import styles from './FilesList.module.scss'
 import { useMenus } from '../../hooks/useMenus'
 import { useFiles } from '../../hooks/useFiles'
+import { useGetFilesQuery } from '../../store/filesSlice'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -38,21 +39,23 @@ const style = {
 
 const FilesList = ({
   setCurrentPath, // files,
-} // setFiles,
-: {
+  // setFiles,
+}: {
   setCurrentPath: (currentPath: string) => void
   // setFiles: (files: any) => void
   // files: Array<any>
 }) => {
+  const { data, error, isLoading } = useGetFilesQuery()
+  console.log(data)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const { menus, setMenus } = useMenus()
   const open = Boolean(anchorEl)
   const [openModal, setOpen] = React.useState(false)
   const { files, setFiles } = useFiles()
 
-  useEffect(() => {
-    getFiles().then((files) => setFiles(files))
-  }, [])
+  // useEffect(() => {
+  //   getFiles().then((files) => setFiles(files))
+  // }, [])
 
   const handleOpen = () => {
     setOpen(true)
