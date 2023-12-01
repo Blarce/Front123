@@ -1,5 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import createAuthRefreshInterceptor from 'axios-auth-refresh'
+import { useFiles } from '../hooks/useFiles'
+import { useMenus } from '../hooks/useMenus'
 
 export const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080',
@@ -10,18 +12,27 @@ export const axiosInstance = axios.create({
   },
 })
 
-export const getFiles = () => {
-  const config = {
+export const getFiles = async () => {
+  const { setFiles } = useFiles()
+  const { setMenus } = useMenus()
+
+  const response = await axiosInstance.get('/getFiles', {
     params: {
       username: localStorage.getItem('username'),
       folder: '',
     },
-  }
-  const response = await axiosInstance.get('/getFiles', config)
+  })
+
+  const nextFiles = response.data.list
+
   // console.log(response)
-  setFiles(response.data.list)
+  setFiles(nextFiles)
+
   const menus = response.data.list.map((m: any) => false)
+
   setMenus(menus)
+
+  return nextFiles
 }
 
 export const refreshAuthLogic = (failedRequest: AxiosError) => {

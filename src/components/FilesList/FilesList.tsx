@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {
   Button,
   Container,
@@ -19,8 +19,10 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { axiosInstance } from '../../api'
+import { axiosInstance, getFiles } from '../../api'
 import styles from './FilesList.module.scss'
+import { useMenus } from '../../hooks/useMenus'
+import { useFiles } from '../../hooks/useFiles'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -35,18 +37,23 @@ const style = {
 }
 
 const FilesList = ({
-  setCurrentPath,
-  files,
-  setFiles,
-}: {
+  setCurrentPath, // files,
+} // setFiles,
+: {
   setCurrentPath: (currentPath: string) => void
-  setFiles: (files: any) => void
-  files: Array<any>
+  // setFiles: (files: any) => void
+  // files: Array<any>
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const [menus, setMenus] = useState([])
+  const { menus, setMenus } = useMenus()
   const open = Boolean(anchorEl)
   const [openModal, setOpen] = React.useState(false)
+  const { files, setFiles } = useFiles()
+
+  useEffect(() => {
+    getFiles()
+  }, [])
+
   const handleOpen = () => {
     setOpen(true)
   }
@@ -78,10 +85,6 @@ const FilesList = ({
   //   if (files[index].)
   // }
 
-  useEffect(() => {
-    getFiles()
-  }, [])
-
   const handleMenuClose = (index: number) => () => {
     const nextMenus = menus
     // @ts-ignore
@@ -103,7 +106,6 @@ const FilesList = ({
     } catch (error) {
       console.error(error)
     }
-    setFiles(files)
     getFiles()
     handleMenuClose(index)
   }

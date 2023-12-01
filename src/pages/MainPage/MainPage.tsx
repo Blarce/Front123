@@ -9,6 +9,7 @@ import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
 import { FilesList } from '../../components/FilesList/FilesList'
 import Modal from '@mui/material/Modal'
+import { useFiles } from '../../hooks/useFiles'
 
 const customStyles = {
   content: {
@@ -24,7 +25,8 @@ const customStyles = {
 const MainPage = () => {
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
-  const [files, setFiles] = useState([])
+  const { files, setFiles } = useFiles()
+
   const [currentPath, setCurrentPath] = useState(
     localStorage.getItem('username') || '',
   )
@@ -104,7 +106,7 @@ const MainPage = () => {
   return (
     <Grid container spacing={0}>
       <Grid xs={12}>
-        <Header setFiles={setFiles} />
+        <Header />
       </Grid>
       <Grid xs={2}>
         <SideBar />
@@ -113,8 +115,8 @@ const MainPage = () => {
         <CurrentPath currentPath={currentPath} />
         <FilesList
           setCurrentPath={setCurrentPath}
-          files={files}
-          setFiles={setFiles}
+          // files={files}
+          // setFiles={setFiles}
         />
       </Grid>
     </Grid>

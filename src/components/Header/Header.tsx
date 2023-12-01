@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { axiosInstance } from '../../api'
+import { axiosInstance, getFiles } from '../../api'
 import { useNavigate } from 'react-router-dom'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -18,7 +18,7 @@ import styles from './Header.module.scss'
 
 //TODO Вставить картинку 133
 
-const Header = ({ setFiles }: { setFiles: (files: any) => void }) => {
+const Header = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
@@ -51,8 +51,7 @@ const Header = ({ setFiles }: { setFiles: (files: any) => void }) => {
             'Content-Type': 'multipart/form-data',
           },
         })
-        const nextFiles = getFiles()
-        setFiles((state: any) => [...state, file])
+        await getFiles()
 
         //const data = await response.json()
         //console.log(data);
