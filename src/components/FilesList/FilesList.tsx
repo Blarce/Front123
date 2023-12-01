@@ -94,17 +94,33 @@ const FilesList = ({
   }
 
   const handleMenuCloseForDelete = (index: number) => async () => {
-    try {
-      const response = await axiosInstance.delete('/deleteFile', {
-        params: {
-          username: localStorage.getItem('username'),
-          //@ts-ignore
-          fullPath: files[index].path,
-        },
-      })
-      console.log(response)
-    } catch (error) {
-      console.error(error)
+    // @ts-ignore
+    if (files[index].isDir) {
+      try {
+        const response = await axiosInstance.delete('/deleteFolder', {
+          params: {
+            username: localStorage.getItem('username'),
+            // @ts-ignore
+            fullPath: files[index].path,
+          },
+        })
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      try {
+        const response = await axiosInstance.delete('/deleteFile', {
+          params: {
+            username: localStorage.getItem('username'),
+            //@ts-ignore
+            fullPath: files[index].path,
+          },
+        })
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
     }
     getFiles({ setFiles, setMenus })
     handleMenuClose(index)
@@ -113,8 +129,8 @@ const FilesList = ({
   const responseForRenameFile = (index: number) => async () => {
     const renameFile = document.getElementById('rename') as HTMLInputElement
     //@ts-ignore
-    const file = files[index].name
-    const extension = file.substring(file.lastIndexOf('.'))
+    const fileName = files[index].name
+    const extension = fileName.substring(fileName.lastIndexOf('.'))
     //@ts-ignore
     const path = files[index].breadCrums
     let cutPath = ''
@@ -135,7 +151,8 @@ const FilesList = ({
       //@ts-ignore
       newName: renameFile.value + extension,
     }
-    console.log(files[index])
+    //@ts-ignore
+    console.log(files[index].isDir)
     try {
       const response = await axiosInstance.put('/renameFile', requestBody)
       const nextFiles = structuredClone(files)
@@ -200,7 +217,15 @@ const FilesList = ({
                     'aria-labelledby': 'basic-button',
                   }}
                 >
-                  <MenuItem onClick={handleMenuClose(index)}>Скачать</MenuItem>
+                  {file.isDir ? (
+                    <MenuItem onClick={handleMenuClose(index)}>
+                      Поделиться
+                    </MenuItem>
+                  ) : (
+                    <MenuItem onClick={handleMenuClose(index)}>
+                      Скачать
+                    </MenuItem>
+                  )}
                   <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
                   <MenuItem onClick={handleMenuCloseForDelete(index)}>
                     Удалить
