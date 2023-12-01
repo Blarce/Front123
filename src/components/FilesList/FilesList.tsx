@@ -51,7 +51,6 @@ const FilesList = ({
   const { menus, setMenus } = useMenus()
   const open = Boolean(anchorEl)
   const [openModal, setOpen] = React.useState(false)
-  const { files, setFiles } = useFiles()
 
   // useEffect(() => {
   //   getFiles().then((files) => setFiles(files))
@@ -79,7 +78,6 @@ const FilesList = ({
     })
     setCurrentPath(response.data.list[0].breadCrums)
     // console.log(response)
-    setFiles(response.data.list)
     const menus = response.data.list.map((m: any) => false)
     setMenus(menus)
   }
@@ -125,7 +123,6 @@ const FilesList = ({
         console.error(error)
       }
     }
-    getFiles().then((files) => setFiles(files))
     handleMenuClose(index)
   }
 
@@ -158,24 +155,21 @@ const FilesList = ({
     console.log(files[index].isDir)
     try {
       const response = await axiosInstance.put('/renameFile', requestBody)
-      const nextFiles = structuredClone(files)
       //@ts-ignore
-      nextFiles[index].name = renameFile.value + extension
-      setFiles(nextFiles)
+      //nextFiles[index].name = renameFile.value + extension
     } catch (error) {
       console.error(error)
     }
-    getFiles().then((files) => setFiles(files))
     handleClose()
   }
-  if (!files.length) {
+  if (!data?.list.length) {
     return <div>Папка пуста. Загрузите файлы.</div>
   }
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
-          {files.map((file: any, index) => (
+          {data?.list.map((file: any, index: number) => (
             <TableRow
               //Поставить on click и проверить is dir //set files // вызывать функцию
               key={file.name}

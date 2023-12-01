@@ -9,4 +9,6 @@ export interface IFile {
   username: string
 }
 
-export type Files = Array<IFile>
+export type Files = {
+  list: Array<IFile>
+}
