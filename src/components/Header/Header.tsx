@@ -18,7 +18,7 @@ import styles from './Header.module.scss'
 
 //TODO Вставить картинку 133
 
-const Header = () => {
+const Header = ({ setFiles }: { setFiles: (files: any) => void }) => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
@@ -51,6 +51,8 @@ const Header = () => {
             'Content-Type': 'multipart/form-data',
           },
         })
+
+        setFiles((state: any) => [...state, file])
 
         //const data = await response.json()
         //console.log(data);

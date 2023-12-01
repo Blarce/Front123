@@ -24,6 +24,7 @@ const customStyles = {
 const MainPage = () => {
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
+  const [files, setFiles] = useState([])
   const [currentPath, setCurrentPath] = useState(
     localStorage.getItem('username') || '',
   )
@@ -103,14 +104,18 @@ const MainPage = () => {
   return (
     <Grid container spacing={0}>
       <Grid xs={12}>
-        <Header />
+        <Header setFiles={setFiles} />
       </Grid>
       <Grid xs={2}>
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
         <CurrentPath currentPath={currentPath} />
-        <FilesList setCurrentPath={setCurrentPath} />
+        <FilesList
+          setCurrentPath={setCurrentPath}
+          files={files}
+          setFiles={setFiles}
+        />
       </Grid>
     </Grid>
   )

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   Button,
+  Container,
   IconButton,
   Paper,
   Table,
@@ -9,7 +10,6 @@ import {
   TableContainer,
   TableRow,
   TextField,
-  Container,
 } from '@mui/material'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -20,9 +20,8 @@ import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { axiosInstance } from '../../api'
-import { useLocation } from 'react-router-dom'
-import { inspect } from 'util'
 import styles from './FilesList.module.scss'
+
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -37,11 +36,13 @@ const style = {
 
 const FilesList = ({
   setCurrentPath,
+  files,
+  setFiles,
 }: {
   setCurrentPath: (currentPath: string) => void
+  setFiles: (files: any) => void
+  files: Array<any>
 }) => {
-  const location: any = useLocation()
-  const [files, setFiles] = useState([])
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
