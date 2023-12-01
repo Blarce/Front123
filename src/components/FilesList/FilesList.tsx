@@ -38,8 +38,8 @@ const style = {
 
 const FilesList = ({
   setCurrentPath, // files,
-} // setFiles,
-: {
+  // setFiles,
+}: {
   setCurrentPath: (currentPath: string) => void
   // setFiles: (files: any) => void
   // files: Array<any>
@@ -51,7 +51,7 @@ const FilesList = ({
   const { files, setFiles } = useFiles()
 
   useEffect(() => {
-    getFiles()
+    getFiles({ setFiles, setMenus })
   }, [])
 
   const handleOpen = () => {
@@ -106,7 +106,7 @@ const FilesList = ({
     } catch (error) {
       console.error(error)
     }
-    getFiles()
+    getFiles({ setFiles, setMenus })
     handleMenuClose(index)
   }
 
@@ -145,7 +145,7 @@ const FilesList = ({
     } catch (error) {
       console.error(error)
     }
-    getFiles()
+    getFiles({ setFiles, setMenus })
     handleClose()
   }
   if (!files.length) {

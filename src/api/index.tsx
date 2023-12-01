@@ -12,10 +12,13 @@ export const axiosInstance = axios.create({
   },
 })
 
-export const getFiles = async () => {
-  const { setFiles } = useFiles()
-  const { setMenus } = useMenus()
-
+export const getFiles = async ({
+  setFiles,
+  setMenus,
+}: {
+  setFiles: (files: any) => void
+  setMenus: (menus: any) => void
+}) => {
   const response = await axiosInstance.get('/getFiles', {
     params: {
       username: localStorage.getItem('username'),
