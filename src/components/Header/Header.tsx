@@ -51,7 +51,7 @@ const Header = () => {
             'Content-Type': 'multipart/form-data',
           },
         })
-        //@ts-ignore
+
         //const data = await response.json()
         //console.log(data);
         console.log(response)
