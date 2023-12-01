@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
   Button,
   Container,
@@ -19,11 +19,11 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { axiosInstance, getFiles } from '../../api'
+import { axiosInstance } from '../../api'
 import styles from './FilesList.module.scss'
 import { useMenus } from '../../hooks/useMenus'
-import { useFiles } from '../../hooks/useFiles'
-import { useGetFilesQuery } from '../../store/filesSlice'
+import { useGetFilesQuery, useLazyGetFilesQuery } from '../../store/filesSlice'
+import { IFile } from '../../store/types'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -42,19 +42,13 @@ const FilesList = ({
   // setFiles,
 }: {
   setCurrentPath: (currentPath: string) => void
-  // setFiles: (files: any) => void
-  // files: Array<any>
 }) => {
-  const { data, error, isLoading } = useGetFilesQuery()
-  console.log(data)
+  const { data, error, isLoading } = useGetFilesQuery('')
+  const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const { menus, setMenus } = useMenus()
   const open = Boolean(anchorEl)
   const [openModal, setOpen] = React.useState(false)
-
-  // useEffect(() => {
-  //   getFiles().then((files) => setFiles(files))
-  // }, [])
 
   const handleOpen = () => {
     setOpen(true)
@@ -69,17 +63,19 @@ const FilesList = ({
       setAnchorEl(event.currentTarget)
     }
 
-  const handleTableRowClick = (file: any) => async () => {
-    const response = await axiosInstance.get('/getFiles', {
-      params: {
-        username: localStorage.getItem('username'),
-        folder: '123/',
-      },
-    })
-    setCurrentPath(response.data.list[0].breadCrums)
-    // console.log(response)
-    const menus = response.data.list.map((m: any) => false)
-    setMenus(menus)
+  const handleTableRowClick = (file: IFile) => async () => {
+    await triggerGetFiles('123/')
+    console.log(result)
+    // const response = await axiosInstance.get('/getFiles', {
+    //   params: {
+    //     username: localStorage.getItem('username'),
+    //     folder: '123/',
+    //   },
+    // })
+    // setCurrentPath(response.data.list[0].breadCrums)
+    // // console.log(response)
+    // const menus = response.data.list.map((m: any) => false)
+    // setMenus(menus)
   }
   //@ts-ignore
   // const GetFilesFromFolder = (index: number) => async () => {
@@ -169,7 +165,7 @@ const FilesList = ({
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
-          {data?.list.map((file: any, index: number) => (
+          {data?.list.map((file: IFile, index: number) => (
             <TableRow
               //Поставить on click и проверить is dir //set files // вызывать функцию
               key={file.name}
@@ -187,7 +183,7 @@ const FilesList = ({
                   {file.name}
                 </TableCell>
                 <TableCell align='left'>{file.username}</TableCell>
-                <TableCell align='left'>{file.data}</TableCell>
+                {/*<TableCell align='left'>{file.data}</TableCell>*/}
                 {file.isDir !== true ? (
                   <TableCell align='left'>{file.size}</TableCell>
                 ) : (

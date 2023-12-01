@@ -39,13 +39,13 @@ export const filesApi = createApi({
   reducerPath: 'FILES',
   baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:8080' }),
   endpoints: (builder) => ({
-    getFiles: builder.query<Files, void>({
-      query: () => ({
+    getFiles: builder.query<Files, string>({
+      query: (path = '') => ({
         url: '/getFiles',
         method: 'get',
         params: {
           username: localStorage.getItem('username'),
-          folder: '',
+          folder: path,
         },
       }),
     }),
@@ -54,4 +54,4 @@ export const filesApi = createApi({
 
 // Export hooks for usage in function components, which are
 // auto-generated based on the defined endpoints
-export const { useGetFilesQuery } = filesApi
+export const { useGetFilesQuery, useLazyGetFilesQuery } = filesApi
