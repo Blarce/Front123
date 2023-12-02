@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 
 import { axiosInstance } from '../../api'
 import { Header } from '../../components/Header/Header'
@@ -23,6 +23,7 @@ const customStyles = {
 }
 
 const MainPage = () => {
+  const { path } = useParams()
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
 

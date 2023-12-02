@@ -38,9 +38,10 @@ const SignInPage = () => {
   const [modalIsOpen, setIsOpen] = useState(false)
 
   const userToken = localStorage.getItem('token')
+  const path = localStorage.getItem('username')
 
   if (userToken) {
-    return <Navigate to='/main' />
+    return <Navigate to={`/main/${path}`} />
   }
 
   function openModal() {

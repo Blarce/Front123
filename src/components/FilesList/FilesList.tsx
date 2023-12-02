@@ -29,6 +29,7 @@ import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
 import Favorite from '@mui/icons-material/Favorite'
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
 import BookmarkIcon from '@mui/icons-material/Bookmark'
+import { Link, useParams } from 'react-router-dom'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -48,8 +49,9 @@ const FilesList = ({
 : {
   setCurrentPath: (currentPath: string) => void
 }) => {
+  const { path } = useParams()
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
-  const { data, error, isLoading } = useGetFilesQuery('')
+  const { data, error, isLoading } = useGetFilesQuery(path || '')
   const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const { menus, setMenus } = useMenus()
@@ -88,13 +90,13 @@ const FilesList = ({
     }
 
   const handleTableRowClick = (file: IFile) => async () => {
-    let headerPath = ''
-    if (file.breadCrums === username) {
-      headerPath = ''
-    } else {
-      headerPath = file.breadCrums
-    }
-    console.log(headerPath)
+    // let headerPath = ''
+    // if (file.breadCrums === username) {
+    //   headerPath = ''
+    // } else {
+    //   headerPath = file.breadCrums
+    // }
+    // console.log(headerPath)
     if (file.isDir) {
       await triggerGetFiles('123/')
     }
@@ -219,95 +221,97 @@ const FilesList = ({
                 verticalAlign: 'baseline',
               }}
             >
-              <Container
-                onClick={handleTableRowClick(file)}
-                className={styles.TableRowInnerContainer}
-              >
-                {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                <TableCell component='th' scope='row'>
-                  {file.name}
-                </TableCell>
-                <TableCell align='left'>{file.username}</TableCell>
-                {/*<TableCell align='left'>{file.data}</TableCell>*/}
-                {file.isDir !== true ? (
-                  <TableCell align='left'>{file.size}</TableCell>
-                ) : (
-                  <TableCell align='left'>‒</TableCell>
-                )}
-              </Container>
-              <Container>
-                <Checkbox
-                  //@ts-ignore
-                  onClick={FavoriteFileRequest(index)}
-                  className={styles.TableRowInnerFavorite}
-                  {...label}
-                  id='favorite'
-                  icon={<FavoriteBorder />}
-                  checkedIcon={<Favorite />}
-                />
-              </Container>
-              <TableCell align='right'>
-                <IconButton
-                  id='basic-button'
-                  aria-controls={open ? 'basic-menu' : undefined}
-                  aria-haspopup='true'
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={handleClick(index)}
+              <Link to={`main/${file.path}`}>
+                <Container
+                  onClick={handleTableRowClick(file)}
+                  className={styles.TableRowInnerContainer}
                 >
-                  <MoreVertIcon />
-                </IconButton>
-                <Menu
-                  onClick={(event) => console.log(event)}
-                  id='basic-menu'
-                  anchorEl={anchorEl}
-                  open={menus[index]}
-                  onClose={handleMenuClose(index)}
-                  MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                  }}
-                >
-                  {file.isDir ? (
-                    <MenuItem onClick={handleMenuClose(index)}>
-                      Поделиться
-                    </MenuItem>
+                  {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
+                  <TableCell component='th' scope='row'>
+                    {file.name}
+                  </TableCell>
+                  <TableCell align='left'>{file.username}</TableCell>
+                  {/*<TableCell align='left'>{file.data}</TableCell>*/}
+                  {file.isDir !== true ? (
+                    <TableCell align='left'>{file.size}</TableCell>
                   ) : (
-                    <MenuItem onClick={handleMenuClose(index)}>
-                      Скачать
-                    </MenuItem>
+                    <TableCell align='left'>‒</TableCell>
                   )}
-                  <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
-                  <MenuItem onClick={handleMenuCloseForDelete(index)}>
-                    Удалить
-                  </MenuItem>
-                  <Modal
-                    open={openModal}
-                    aria-labelledby='modal-modal-title'
-                    aria-describedby='modal-modal-description'
+                </Container>
+                <Container>
+                  <Checkbox
+                    //@ts-ignore
+                    onClick={FavoriteFileRequest(index)}
+                    className={styles.TableRowInnerFavorite}
+                    {...label}
+                    id='favorite'
+                    icon={<FavoriteBorder />}
+                    checkedIcon={<Favorite />}
+                  />
+                </Container>
+                <TableCell align='right'>
+                  <IconButton
+                    id='basic-button'
+                    aria-controls={open ? 'basic-menu' : undefined}
+                    aria-haspopup='true'
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick(index)}
                   >
-                    <Box sx={style}>
-                      <Typography
-                        id='modal-modal-title'
-                        variant='h6'
-                        component='h2'
-                      >
-                        Переименовать
-                      </Typography>
-                      <TextField fullWidth id='rename' />
-                      <Button onClick={handleClose} variant='text'>
-                        Отмена
-                      </Button>
-                      <Button
-                        //@ts-ignore
-                        onClick={responseForRenameFile(index)}
-                        type='submit'
-                        variant='contained'
-                      >
-                        Ок
-                      </Button>
-                    </Box>
-                  </Modal>
-                </Menu>
-              </TableCell>
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu
+                    onClick={(event) => console.log(event)}
+                    id='basic-menu'
+                    anchorEl={anchorEl}
+                    open={menus[index]}
+                    onClose={handleMenuClose(index)}
+                    MenuListProps={{
+                      'aria-labelledby': 'basic-button',
+                    }}
+                  >
+                    {file.isDir ? (
+                      <MenuItem onClick={handleMenuClose(index)}>
+                        Поделиться
+                      </MenuItem>
+                    ) : (
+                      <MenuItem onClick={handleMenuClose(index)}>
+                        Скачать
+                      </MenuItem>
+                    )}
+                    <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
+                    <MenuItem onClick={handleMenuCloseForDelete(index)}>
+                      Удалить
+                    </MenuItem>
+                    <Modal
+                      open={openModal}
+                      aria-labelledby='modal-modal-title'
+                      aria-describedby='modal-modal-description'
+                    >
+                      <Box sx={style}>
+                        <Typography
+                          id='modal-modal-title'
+                          variant='h6'
+                          component='h2'
+                        >
+                          Переименовать
+                        </Typography>
+                        <TextField fullWidth id='rename' />
+                        <Button onClick={handleClose} variant='text'>
+                          Отмена
+                        </Button>
+                        <Button
+                          //@ts-ignore
+                          onClick={responseForRenameFile(index)}
+                          type='submit'
+                          variant='contained'
+                        >
+                          Ок
+                        </Button>
+                      </Box>
+                    </Modal>
+                  </Menu>
+                </TableCell>
+              </Link>
             </TableRow>
           ))}
         </TableBody>
