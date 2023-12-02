@@ -46,7 +46,7 @@ export const filesApi = createApi({
         method: 'get',
         params: {
           username: localStorage.getItem('username'),
-          folder: '',
+          folder: path,
         },
       }),
     }),

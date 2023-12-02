@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Button,
   Container,
@@ -51,13 +51,19 @@ const FilesList = ({
 }) => {
   const { path } = useParams()
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
-  const { data, error, isLoading } = useGetFilesQuery(path || '')
+  //const { data, error, isLoading } = useGetFilesQuery(path || '')
   const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
+  const { data } = result
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const { menus, setMenus } = useMenus()
   const open = Boolean(anchorEl)
   const [openModal, setOpen] = React.useState(false)
   const username = localStorage.getItem('username')
+
+  useEffect(() => {
+    triggerGetFiles('')
+  }, [])
+
   const handleOpen = () => {
     setOpen(true)
   }
@@ -221,97 +227,95 @@ const FilesList = ({
                 verticalAlign: 'baseline',
               }}
             >
-              <Link to={`main/${file.path}`}>
-                <Container
-                  onClick={handleTableRowClick(file)}
-                  className={styles.TableRowInnerContainer}
-                >
-                  {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                  <TableCell component='th' scope='row'>
-                    {file.name}
-                  </TableCell>
-                  <TableCell align='left'>{file.username}</TableCell>
-                  {/*<TableCell align='left'>{file.data}</TableCell>*/}
-                  {file.isDir !== true ? (
-                    <TableCell align='left'>{file.size}</TableCell>
-                  ) : (
-                    <TableCell align='left'>‒</TableCell>
-                  )}
-                </Container>
-                <Container>
-                  <Checkbox
-                    //@ts-ignore
-                    onClick={FavoriteFileRequest(index)}
-                    className={styles.TableRowInnerFavorite}
-                    {...label}
-                    id='favorite'
-                    icon={<FavoriteBorder />}
-                    checkedIcon={<Favorite />}
-                  />
-                </Container>
-                <TableCell align='right'>
-                  <IconButton
-                    id='basic-button'
-                    aria-controls={open ? 'basic-menu' : undefined}
-                    aria-haspopup='true'
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClick(index)}
-                  >
-                    <MoreVertIcon />
-                  </IconButton>
-                  <Menu
-                    onClick={(event) => console.log(event)}
-                    id='basic-menu'
-                    anchorEl={anchorEl}
-                    open={menus[index]}
-                    onClose={handleMenuClose(index)}
-                    MenuListProps={{
-                      'aria-labelledby': 'basic-button',
-                    }}
-                  >
-                    {file.isDir ? (
-                      <MenuItem onClick={handleMenuClose(index)}>
-                        Поделиться
-                      </MenuItem>
-                    ) : (
-                      <MenuItem onClick={handleMenuClose(index)}>
-                        Скачать
-                      </MenuItem>
-                    )}
-                    <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
-                    <MenuItem onClick={handleMenuCloseForDelete(index)}>
-                      Удалить
-                    </MenuItem>
-                    <Modal
-                      open={openModal}
-                      aria-labelledby='modal-modal-title'
-                      aria-describedby='modal-modal-description'
-                    >
-                      <Box sx={style}>
-                        <Typography
-                          id='modal-modal-title'
-                          variant='h6'
-                          component='h2'
-                        >
-                          Переименовать
-                        </Typography>
-                        <TextField fullWidth id='rename' />
-                        <Button onClick={handleClose} variant='text'>
-                          Отмена
-                        </Button>
-                        <Button
-                          //@ts-ignore
-                          onClick={responseForRenameFile(index)}
-                          type='submit'
-                          variant='contained'
-                        >
-                          Ок
-                        </Button>
-                      </Box>
-                    </Modal>
-                  </Menu>
+              <Container
+                onClick={handleTableRowClick(file)}
+                className={styles.TableRowInnerContainer}
+              >
+                {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
+                <TableCell component='th' scope='row'>
+                  {file.name}
                 </TableCell>
-              </Link>
+                <TableCell align='left'>{file.username}</TableCell>
+                {/*<TableCell align='left'>{file.data}</TableCell>*/}
+                {file.isDir !== true ? (
+                  <TableCell align='left'>{file.size}</TableCell>
+                ) : (
+                  <TableCell align='left'>‒</TableCell>
+                )}
+              </Container>
+              <Container>
+                <Checkbox
+                  //@ts-ignore
+                  onClick={FavoriteFileRequest(index)}
+                  className={styles.TableRowInnerFavorite}
+                  {...label}
+                  id='favorite'
+                  icon={<FavoriteBorder />}
+                  checkedIcon={<Favorite />}
+                />
+              </Container>
+              <TableCell align='right'>
+                <IconButton
+                  id='basic-button'
+                  aria-controls={open ? 'basic-menu' : undefined}
+                  aria-haspopup='true'
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick(index)}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  onClick={(event) => console.log(event)}
+                  id='basic-menu'
+                  anchorEl={anchorEl}
+                  open={menus[index]}
+                  onClose={handleMenuClose(index)}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                  }}
+                >
+                  {file.isDir ? (
+                    <MenuItem onClick={handleMenuClose(index)}>
+                      Поделиться
+                    </MenuItem>
+                  ) : (
+                    <MenuItem onClick={handleMenuClose(index)}>
+                      Скачать
+                    </MenuItem>
+                  )}
+                  <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
+                  <MenuItem onClick={handleMenuCloseForDelete(index)}>
+                    Удалить
+                  </MenuItem>
+                  <Modal
+                    open={openModal}
+                    aria-labelledby='modal-modal-title'
+                    aria-describedby='modal-modal-description'
+                  >
+                    <Box sx={style}>
+                      <Typography
+                        id='modal-modal-title'
+                        variant='h6'
+                        component='h2'
+                      >
+                        Переименовать
+                      </Typography>
+                      <TextField fullWidth id='rename' />
+                      <Button onClick={handleClose} variant='text'>
+                        Отмена
+                      </Button>
+                      <Button
+                        //@ts-ignore
+                        onClick={responseForRenameFile(index)}
+                        type='submit'
+                        variant='contained'
+                      >
+                        Ок
+                      </Button>
+                    </Box>
+                  </Modal>
+                </Menu>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
