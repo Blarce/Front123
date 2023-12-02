@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 
-import { axiosInstance } from '../../api'
+import { axiosInstance, axiosInstanceForDownload } from '../../api'
 import { Header } from '../../components/Header/Header'
 
 import { Grid } from '@mui/material'
@@ -9,7 +9,6 @@ import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
 import { FilesList } from '../../components/FilesList/FilesList'
 import Modal from '@mui/material/Modal'
-import { IFile } from '../../store/types'
 
 const customStyles = {
   content: {
@@ -33,6 +32,7 @@ const MainPage = () => {
   const userToken = localStorage.getItem('token')
 
   useEffect(() => {
+    //DownloadFile()
     //openModal()
   }, [])
 
@@ -54,7 +54,7 @@ const MainPage = () => {
   const handleLogOff = async () => {
     try {
       const response = await axiosInstance.post('/sign-out')
-      console.log(response)
+      console.log(response.data)
       localStorage.clear()
     } catch (error) {
       console.error(error)

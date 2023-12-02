@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { axiosInstance, getFiles } from '../../api'
+import React, { useEffect, useState } from 'react'
+import { axiosInstance, axiosInstanceForUpload, getFiles } from '../../api'
 import { useNavigate } from 'react-router-dom'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -16,6 +16,8 @@ import AdbIcon from '@mui/icons-material/Adb'
 import { Button, TextField } from '@mui/material'
 import styles from './Header.module.scss'
 import { useMenus } from '../../hooks/useMenus'
+import { useLazyGetFilesQuery } from '../../store/filesSlice'
+import { IFile } from '../../store/types'
 
 //TODO Вставить картинку 133
 
@@ -24,40 +26,44 @@ const Header = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
   )
+  const username = localStorage.getItem('username')
   const { setMenus } = useMenus()
   const navigate = useNavigate()
   const [file, setFile] = useState<File | null>(null)
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [triggerGetFiles, result] = useLazyGetFilesQuery()
+  const { data } = result
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    file: IFile,
+  ) => {
     if (e.target.files) {
-      const file = structuredClone(e.target.files[0])
-      console.log(file)
-      setFile(file)
-    }
-  }
-  const handleUpload = async () => {
-    if (file) {
-      console.log('Uploading file...')
-      console.log(file.name)
+      const fileToUpload = structuredClone(e.target.files[0])
       const formData = new FormData()
-      formData.append('multipartFile', file)
-      formData.append('fileName', file.name)
-      const requestBody = {
-        // username: localStorage.getItem('username'),
-        // fullPath: '',
-        multipartFile: formData,
-      }
+      formData.append('multipartFile', fileToUpload)
+      formData.append('fileName', fileToUpload.name)
+      const Path = data?.list[0].breadCrums
       try {
-        const response = await axiosInstance.post('/uploadFile', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+        const response = await axiosInstanceForUpload.post(
+          '/uploadFile',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            params: {
+              username: localStorage.getItem('username'),
+              fullPath: '',
+            },
           },
-        })
+        )
         // await getFiles().then((files) => setFiles(files))
         //const data = await response.json()
         console.log(response)
       } catch (error) {
         console.error(error)
       }
+      triggerGetFiles('')
     }
   }
 
@@ -147,14 +153,19 @@ const Header = () => {
             Monkey Cloud
           </Typography>{' '}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
-          <input type='file' id='input' onChange={handleFileChange} />
-          <Button
-            className={styles.UploadButton}
-            variant='contained'
-            onClick={handleUpload}
-          >
-            UPLOAD
-          </Button>
+          <input
+            type='file'
+            id='input'
+            //@ts-ignore
+            onChange={handleFileChange}
+          />
+          {/*<Button*/}
+          {/*  className={styles.UploadButton}*/}
+          {/*  variant='contained'*/}
+          {/*  onClick={handleUpload}*/}
+          {/*>*/}
+          {/*  UPLOAD*/}
+          {/*</Button>*/}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title='Open settings'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

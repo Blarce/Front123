@@ -11,6 +11,25 @@ export const axiosInstance = axios.create({
   },
 })
 
+export const axiosInstanceForUpload = axios.create({
+  baseURL: 'http://localhost:8080',
+  timeout: 300000,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+  },
+})
+
+export const axiosInstanceForDownload = axios.create({
+  baseURL: 'http://localhost:8080',
+  timeout: 300000,
+  responseType: 'blob',
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/octet-stream',
+  },
+})
+
 export const getFiles = async () => {
   const response = await axiosInstance.get('/getFiles', {
     params: {
@@ -48,6 +67,34 @@ createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic, {
 })
 
 axiosInstance.interceptors.request.use(function (config) {
+  if (localStorage.getItem('token')) {
+    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
+  }
+  if (config?.url?.toLowerCase().includes('refresh')) {
+    config.headers.Authorization = `${localStorage.getItem('refreshToken')}`
+  }
+  return config
+})
+
+createAuthRefreshInterceptor(axiosInstanceForUpload, refreshAuthLogic, {
+  statusCodes: [408],
+})
+
+axiosInstanceForUpload.interceptors.request.use(function (config) {
+  if (localStorage.getItem('token')) {
+    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
+  }
+  if (config?.url?.toLowerCase().includes('refresh')) {
+    config.headers.Authorization = `${localStorage.getItem('refreshToken')}`
+  }
+  return config
+})
+
+createAuthRefreshInterceptor(axiosInstanceForDownload, refreshAuthLogic, {
+  statusCodes: [408],
+})
+
+axiosInstanceForDownload.interceptors.request.use(function (config) {
   if (localStorage.getItem('token')) {
     config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
   }
