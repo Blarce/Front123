@@ -27,6 +27,7 @@ export const axiosInstanceForDownload = axios.create({
   headers: {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/octet-stream',
+    'Content-Disposition': '*',
   },
 })
 

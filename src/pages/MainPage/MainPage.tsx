@@ -9,6 +9,7 @@ import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
 import { FilesList } from '../../components/FilesList/FilesList'
 import Modal from '@mui/material/Modal'
+import { useLazyGetFilesQuery } from '../../store/filesSlice'
 
 const customStyles = {
   content: {
@@ -22,6 +23,7 @@ const customStyles = {
 }
 
 const MainPage = () => {
+  const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
   const { path } = useParams()
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
@@ -48,9 +50,6 @@ const MainPage = () => {
     setIsOpen(false)
   }
 
-  console.log(localStorage.getItem('token'))
-  console.log(localStorage.getItem('username'))
-
   const handleLogOff = async () => {
     try {
       const response = await axiosInstance.post('/sign-out')
@@ -76,11 +75,15 @@ const MainPage = () => {
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
-        <CurrentPath currentPath={currentPath} />
+        <CurrentPath
+          currentPath={currentPath}
+          triggerGetFiles={triggerGetFiles}
+          setCurrentPath={setCurrentPath}
+        />
         <FilesList
           setCurrentPath={setCurrentPath}
-          // files={files}
-          // setFiles={setFiles}
+          triggerGetFiles={triggerGetFiles}
+          data={result?.data}
         />
       </Grid>
     </Grid>

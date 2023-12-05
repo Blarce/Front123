@@ -49,6 +49,12 @@ export const filesApi = createApi({
           folder: path,
         },
       }),
+      async onCacheEntryAdded(args, { getState }) {
+        try {
+          //await getState
+          console.log('queryFulfilled', getState())
+        } catch {}
+      },
     }),
   }),
 })
